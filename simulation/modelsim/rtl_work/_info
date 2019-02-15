@@ -1,0 +1,148 @@
+m255
+K3
+13
+cModel Technology
+Z0 dC:\Users\twsch\OneDrive\Desktop\ARM_64_Warthog\simulation\modelsim
+vaddress_select
+IS3PNJh2aC0m2V9lnP]moA1
+V8Bl?I^iZSA2iT[S5efJ^03
+Z1 dC:\Users\twsch\OneDrive\Desktop\ARM_64_Warthog\simulation\modelsim
+Z2 w1549977338
+Z3 8C:/Users/twsch/OneDrive/Desktop/ARM_64_Warthog/RAM_64bit.v
+Z4 FC:/Users/twsch/OneDrive/Desktop/ARM_64_Warthog/RAM_64bit.v
+L0 34
+Z5 OV;L;10.1d;51
+r1
+31
+Z6 !s108 1549989160.498000
+Z7 !s107 C:/Users/twsch/OneDrive/Desktop/ARM_64_Warthog/RAM_64bit.v|
+Z8 !s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/twsch/OneDrive/Desktop/ARM_64_Warthog|C:/Users/twsch/OneDrive/Desktop/ARM_64_Warthog/RAM_64bit.v|
+Z9 o-vlog01compat -work work -O0
+Z10 !s92 -vlog01compat -work work +incdir+C:/Users/twsch/OneDrive/Desktop/ARM_64_Warthog -O0
+!i10b 1
+!s100 ka;BXezC<K`Fz=mPMMW=X0
+!s85 0
+!s101 -O0
+vbit_barrel_shifter
+IzoLizWO]XlRG4BU2Qbf^60
+VH?g[TW=LVcZmIHdThX_5X3
+R1
+R2
+R3
+R4
+L0 18
+R5
+r1
+31
+R6
+R7
+R8
+R9
+R10
+!i10b 1
+!s100 WB`SZS32a^0`_JHoR:[AB1
+!s85 0
+!s101 -O0
+vbyte_barrel_shifter
+I=X7IOIP7V]Yo_]S;@CF3K1
+V7kSKP:i1[n2QgjMMFT4gl1
+R1
+R2
+R3
+R4
+L0 1
+R5
+r1
+31
+R6
+R7
+R8
+R9
+R10
+!i10b 1
+!s100 e9^OEH@QV<lHdznogO9aH3
+!s85 0
+!s101 -O0
+vmask_generate
+I8QoamD94F@QWegZDmc48j1
+VCa9Ng?^2PjXOFD6b;n=iP1
+R1
+R2
+R3
+R4
+L0 53
+R5
+r1
+31
+R6
+R7
+R8
+R9
+R10
+!i10b 1
+!s100 9jHkBS4<7J=ziW4;1E0OV2
+!s85 0
+!s101 -O0
+vRAM_64bit
+IILURHRS4]ef3H5lz[ki=J3
+VaUkN;9@I0LQ_2bH4Am8]E0
+R1
+R2
+R3
+R4
+L0 102
+R5
+r1
+31
+R6
+R7
+R8
+R9
+R10
+n@r@a@m_64bit
+!i10b 1
+!s100 zFAgcXz>>la[F:GDldYa<0
+!s85 0
+!s101 -O0
+vRAM_64bit_testbench
+!i10b 1
+!s100 cD;eP:4JH8;0NKW]UHj5i0
+Igh5VA^GIK8ZZY4>3_ZiPa1
+V7PmYE9RIWVz:g^7U9<GX11
+R1
+w1549977336
+8C:/Users/twsch/OneDrive/Desktop/ARM_64_Warthog/RAM_64bit_testbench.v
+FC:/Users/twsch/OneDrive/Desktop/ARM_64_Warthog/RAM_64bit_testbench.v
+L0 1
+R5
+r1
+!s85 0
+31
+!s108 1549989160.990000
+!s107 C:/Users/twsch/OneDrive/Desktop/ARM_64_Warthog/RAM_64bit_testbench.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/twsch/OneDrive/Desktop/ARM_64_Warthog|C:/Users/twsch/OneDrive/Desktop/ARM_64_Warthog/RAM_64bit_testbench.v|
+!s101 -O0
+R9
+R10
+n@r@a@m_64bit_testbench
+vRAM_8bit
+I;eBKo<fMQiNKehWU;D7kn0
+VePR?ROS_GlHUgR9MgWlKi1
+R1
+R2
+R3
+R4
+L0 71
+R5
+r1
+31
+R6
+R7
+R8
+R9
+R10
+n@r@a@m_8bit
+!i10b 1
+!s100 `z6RQ_Zo:abDbo^>f9Abz0
+!s85 0
+!s101 -O0
