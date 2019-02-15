@@ -60,24 +60,26 @@ set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id ALU_LEGv8_Te
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME ALU_LEGv8_Testbench -section_id ALU_LEGv8_Testbench
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
-set_global_assignment -name VERILOG_FILE RAM_64bit_testbench.v
-set_global_assignment -name VERILOG_FILE RAM_64bit.v
-set_global_assignment -name VERILOG_FILE RegisterNbit.v
-set_global_assignment -name VERILOG_FILE RegisterFile32x64_Testbench.v
-set_global_assignment -name VERILOG_FILE RegisterFile32x64.v
-set_global_assignment -name VERILOG_FILE Muxes.v
-set_global_assignment -name VERILOG_FILE Decoders.v
-set_global_assignment -name VERILOG_FILE ALU_LEGv8_Testbench.v
-set_global_assignment -name VERILOG_FILE ALU_LEGv8.v
-set_global_assignment -name VERILOG_FILE Carry_Lookahead_Adders.v
-set_global_assignment -name EDA_TEST_BENCH_FILE RegisterFile32x64_Testbench.v -section_id RegisterFile32x64_Testbench
-set_global_assignment -name EDA_TEST_BENCH_FILE ALU_LEGv8_Testbench.v -section_id ALU_LEGv8_Testbench
 set_global_assignment -name EDA_TEST_BENCH_NAME RAM_64bit_testbench -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id RAM_64bit_testbench
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME RAM_64bit_testbench -section_id RAM_64bit_testbench
-set_global_assignment -name EDA_TEST_BENCH_FILE RAM_64bit_testbench.v -section_id RAM_64bit_testbench
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name VERILOG_FILE ARM_64/ALU/ALU_LEGv8_Testbench.v
+set_global_assignment -name VERILOG_FILE ARM_64/ALU/ALU_LEGv8.v
+set_global_assignment -name VERILOG_FILE ARM_64/memory/RAM/RAM_64bit_testbench.v
+set_global_assignment -name VERILOG_FILE ARM_64/memory/RAM/RAM_64bit.v
+set_global_assignment -name VERILOG_FILE ARM_64/memory/ROM/rom_case.v
+set_global_assignment -name VERILOG_FILE ARM_64/memory/ROM/ROM_64bit_testbench.v
+set_global_assignment -name VERILOG_FILE ARM_64/memory/ROM/ROM_64bit.v
+set_global_assignment -name VERILOG_FILE ARM_64/misc/Muxes.v
+set_global_assignment -name VERILOG_FILE ARM_64/misc/Decoders.v
+set_global_assignment -name VERILOG_FILE ARM_64/misc/Carry_Lookahead_Adders.v
+set_global_assignment -name VERILOG_FILE ARM_64/RegisterFile/RegisterNbit.v
+set_global_assignment -name VERILOG_FILE ARM_64/RegisterFile/RegisterFile32x64_Testbench.v
+set_global_assignment -name VERILOG_FILE ARM_64/RegisterFile/RegisterFile32x64.v
+set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/RegisterFile/RegisterFile32x64_Testbench.v -section_id RegisterFile32x64_Testbench
+set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/ALU/ALU_LEGv8_Testbench.v -section_id ALU_LEGv8_Testbench
+set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/memory/RAM/RAM_64bit_testbench.v -section_id RAM_64bit_testbench
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
-set_global_assignment -name VERILOG_FILE rom_case.v
