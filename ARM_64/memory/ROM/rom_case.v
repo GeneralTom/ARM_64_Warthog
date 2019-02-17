@@ -23,7 +23,8 @@ module rom_case(out, address);
 			8'h0E:  out = 16'b1010010001000001;//LD R4, 65 (R4 should be 9)
 			8'h0F:  out = 16'b1011100111110001;//BRN R1, -15 (should be true and br)
 			//more cases here
-			default:out = 64'b0000000000000000;
+			8'hFF:  out = 16'b1001100000000000;
+			default:out = 16'b0000000000000000;
 
 		endcase
 	end
