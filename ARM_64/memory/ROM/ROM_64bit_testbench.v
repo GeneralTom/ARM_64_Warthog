@@ -10,7 +10,7 @@ module ROM_64bit_testbench();
 		clock <= 1'b0;
 		address <= 8'b0;
 		size <= 2'b11; // Initially complete 8 byte memory reads
-		#1280 $stop;
+		#970 $stop;
 	end
 	
 	always
@@ -52,6 +52,15 @@ module ROM_64bit_testbench();
 		#5
 		repeat (8) begin
 			#10 address <= address + 4'b0100;
+		end
+		
+		#5
+		size <= 2'b11;
+		address <= 8'b01101010;
+
+		#5
+		repeat (8) begin
+			#10 address <= address + 4'b1101;
 		end
 		
 	end
