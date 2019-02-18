@@ -45,6 +45,15 @@ module ROM_64bit_testbench();
 			#10 address <= address + 4'b0001;
 		end
 
+		#5
+		size <= 2'b10;
+		address <= 8'b00110000;
+
+		#5
+		repeat (8) begin
+			#10 address <= address + 4'b0100;
+		end
+		
 	end
 
 
