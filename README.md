@@ -14,7 +14,9 @@ purposes.
 
 ## Authors
 
-* **Thomas Schofield** - *Initial work* - [GeneralTom](https://github.com/GeneralTom)
+* **Thomas Schofield** - [GeneralTom](https://github.com/GeneralTom)
+* **Jake Dimond**  - [jwdimond](https://github.com/jwdimond)
+* **Ryan Meehan** - [meehanr3](https://github.com/meehanr3)
 
 
 ## License
