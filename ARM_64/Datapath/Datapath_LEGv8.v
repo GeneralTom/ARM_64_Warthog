@@ -1,27 +1,33 @@
-module Datapath_LEGv8 (data, addr, constant, status, DA, SA, SB, W, reset, clock, FS, C0, EN_ALU, EN_ADDR_ALU, EN_B, r0, r1, r2, r3, r4, r5, r6, r7);
+module Datapath_LEGv8 (data, address, reset, clock, constant, DA, SA, SB, W, status, FS, C0, Bsel, EN_ALU, EN_B, EN_ADDR_ALU, r0, r1, r2, r3, r4, r5, r6, r7);
+	// Main outputs
 	output tri [63:0] data;
-	output reg [31:0] addr;
+	output tri [31:0] address;
 
-	// Visualization outputs
-	output [15:0] r0, r1, r2, r3, r4, r5, r6, r7;
+	// Basic control signals
+	input reset, clock;
+
+	// Constant input
+	input [63:0] constant;
 
 	// Register File Required Inputs
 	input [4:0] DA, SA, SB;
 	input W;
-	input reset;
-	input clock;
 
 	// ALU Required Inputs
+	output [3:0] status; // Signal outputs of the ALU
 	input [4:0] FS;
 	input C0;
 
-	// Constant input
-	input [63:0] constant;
+	// For B Bus mux
+	input Bsel; // 0 - B, 1 - Constant
 
 	// Tristate signals
 	input EN_ALU;
 	input EN_B;
 	input EN_ADDR_ALU;
+
+	// Visualization outputs
+	output [15:0] r0, r1, r2, r3, r4, r5, r6, r7;
 
 	// ALU Required
 	wire [63:0] REG_A_bus, REG_B_bus, ALU_B_bus, F;
@@ -31,20 +37,11 @@ module Datapath_LEGv8 (data, addr, constant, status, DA, SA, SB, W, reset, clock
 	assign data = EN_B ? REG_B_bus : 64'bz;
 
 	// Address bus tristates
-	assign addr = EN_ADDR_ALU ? F[31:0] : 32'bz;
+	assign address = EN_ADDR_ALU ? F[31:0] : 32'bz;
 
-	mux2to1_64bit b_select (ALU_B_bus, Fx, REG_B_bus, constant);
+	mux2to1_64bit b_select (ALU_B_bus, Bsel, REG_B_bus, constant);
 
-	RegisterFile32x64 leg_reg (REG_A_bus, REG_B_bus, SA, SB, D, DA, W, reset, clock);
+	RegisterFile32x64 leg_reg (REG_A_bus, REG_B_bus, SA, SB, D, DA, W, reset, clock, r0, r1, r2, r3, r4, r5, r6, r7);
 	ALU_LEGv8 leg_alu (REG_A_bus, ALU_B_bus, FS, C0, F, status);
-
-	assign r0 = leg_reg.r0 [15:0];
-	assign r1 = leg_reg.r1 [15:0];
-	assign r2 = leg_reg.r2 [15:0];
-	assign r3 = leg_reg.r3 [15:0];
-	assign r4 = leg_reg.r4 [15:0];
-	assign r5 = leg_reg.r5 [15:0];
-	assign r6 = leg_reg.r6 [15:0];
-	assign r7 = leg_reg.r7 [15:0];
 
 endmodule
