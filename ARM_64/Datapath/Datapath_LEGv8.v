@@ -41,7 +41,7 @@ module Datapath_LEGv8 (data, address, reset, clock, constant, DA, SA, SB, W, sta
 
 	mux2to1_64bit b_select (ALU_B_bus, Bsel, REG_B_bus, constant);
 
-	RegisterFile32x64 leg_reg (REG_A_bus, REG_B_bus, SA, SB, D, DA, W, reset, clock, r0, r1, r2, r3, r4, r5, r6, r7);
+	RegisterFile32x64 leg_reg (REG_A_bus, REG_B_bus, SA, SB, data, DA, W, reset, clock, r0, r1, r2, r3, r4, r5, r6, r7);
 	ALU_LEGv8 leg_alu (REG_A_bus, ALU_B_bus, FS, C0, F, status);
 
 endmodule
