@@ -40,12 +40,19 @@ module Datapath_With_Memory_testbench();
 		#10
 
         // R1 <-- R31 - R0
-        ControlWord <= 32'b00000_0_0_1_0_1_01001_1_1_00000_11111_00001;
+        ControlWord <= 32'b00000_0_0_1_0_1_01001_0_1_00000_11111_00001;
         #10
-		$stop;
+
         // M[R31 + constant] <-- R1
+        // ControlWord <= 32'b00000_1_0_1_0_1_01001_1_1_00000_11111_00001;
+        // #10
+
         // R1 <-- R0 & R1
+        ControlWord <= 32'b00000_0_0_1_0_0_00000_0_1_00001_00000_00001;
+        #10
+
         // R2 <-- M[R31 + constant]
+		$stop;
 	end
 
 endmodule
