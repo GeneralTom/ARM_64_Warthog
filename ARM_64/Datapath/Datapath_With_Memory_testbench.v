@@ -43,7 +43,7 @@ module Datapath_With_Memory_testbench();
         // M[R31 + constant] <-- R1
         ControlWord <= 32'b00000_0_0_1_0_0_01000_1_1_00000_11111_00111;
         #10
-        ControlWord <= 32'b00111_1_1_0_1_0_00100_0_0_00111_00001_00000;
+        ControlWord <= 32'b00111_1_1_0_1_0_00100_0_0_00001_00111_00000;
         #10
 
         // R1 <-- R0 & R1 (Working, don't touch!)
@@ -53,7 +53,7 @@ module Datapath_With_Memory_testbench();
         // R2 <-- M[R31 + constant]
 		  ControlWord <= 32'b00000_0_0_1_0_0_01000_1_1_00000_11111_00111;
         #10
-		  ControlWord <= 32'b01000_1_0_0_1_0_00100_0_1_11111_00111_00010;
+		  ControlWord <= 32'b01011_1_0_0_1_0_00100_0_1_11111_00111_00010;
 		  #10
 		$stop;
 	end
