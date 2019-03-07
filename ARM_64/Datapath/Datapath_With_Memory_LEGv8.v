@@ -35,7 +35,6 @@ module Datapath_With_Memory_LEGv8(ControlWord, data, address, reset, clock, cons
 	// RAM
 	wire chip_select, write_enable, read_enable;
 	wire [1:0] size;
-	//input chip_select;
 
 	// Tristate signals
 	wire EN_ALU;
@@ -43,14 +42,6 @@ module Datapath_With_Memory_LEGv8(ControlWord, data, address, reset, clock, cons
 	wire EN_ADDR_ALU;
 
 	// Assign Values from ControlWord
-	// 32'b0_00_1_0_1_0_00_1_00_00100_00000_00000_00000;
-	// assign DA = ControlWord [4:0];
-	// assign SA = ControlWord [9:5];
-	// assign SB = ControlWord [14:10];
-	// assign FS = ControlWord [19:15];
-	// assign PS = ControlWord [21:20]; // PS input on Program Counter
-	// assign W = ControlWord [22];
-
 	assign DA = ControlWord [4:0];
 	assign SA = ControlWord [9:5];
 	assign SB = ControlWord [14:10];
