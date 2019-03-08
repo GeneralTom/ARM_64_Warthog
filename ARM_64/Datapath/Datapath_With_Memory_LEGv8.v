@@ -37,9 +37,7 @@ module Datapath_With_Memory_LEGv8(ControlWord, data, address, reset, clock, cons
 	wire [1:0] size;
 
 	// Tristate signals
-	wire EN_ALU;
-	wire EN_B;
-	wire EN_ADDR_ALU;
+	wire EN_ALU, EN_B, EN_ADDR_ALU, EN_PC;
 
 	// Assign Values from ControlWord
 	assign DA = ControlWord [4:0];
@@ -56,6 +54,13 @@ module Datapath_With_Memory_LEGv8(ControlWord, data, address, reset, clock, cons
 	assign size = ControlWord [28:27];
 	assign write_enable = ControlWord [29];
 	assign read_enable = ControlWord [30];
+
+	assign EN_ADDR_ALU = addr_signals[0];
+
+	wire [1:0] addr_signals;
+
+	Decoder1to2 addr_enable (EN_ADDR, addr_signals);
+
 
 	//            Datapath_LEGv8 (data, address, reset, clock, constant, DA, SA, SB, W, status, FS, C0, Bsel, EN_ALU, EN_B, EN_ADDR_ALU, r0, r1, r2, r3, r4, r5, r6, r7);
 	Datapath_LEGv8 base_datapath (data, address, reset, clock, constant, DA, SA, SB, W, status, FS, C0, Bsel, EN_ALU, EN_B, EN_ADDR_ALU, r0, r1, r2, r3, r4, r5, r6, r7);
