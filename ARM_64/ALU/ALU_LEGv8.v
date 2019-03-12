@@ -52,18 +52,19 @@ module Shifter(left, right, A, shift_amount);
 endmodule
 
 module Adder(S, Cout, A, B, Cin);
-	input [63:0] A, B;
+	parameter N = 64;
+	input [N-1:0] A, B;
 	input Cin;
-	output [63:0] S;
+	output [N-1:0] S;
 	output Cout;
 	
-	wire [64:0]carry;
+	wire [N-1:0]carry;
 	assign carry[0] = Cin;
-	assign Cout = carry[64];
+	assign Cout = carry[N-1];
 	// use generate block to instantiate 64 full adders
 	genvar i;
 	generate
-	for (i=0; i<64; i=i+1) begin: full_adders // blocks within a generate block need to be named
+	for (i=0; i<N-1; i=i+1) begin: full_adders // blocks within a generate block need to be named
 		FullAdder adder_inst (S[i], carry[i+1], A[i], B[i], carry[i]);	
 	end
 	endgenerate
