@@ -39,7 +39,7 @@ endmodule
 
 module Decoder1to2(S, out);
 	input S;
-	output [1:0] out;
+	output reg [1:0] out;
 
 	always @ (S) begin
 		case (S)
@@ -52,7 +52,7 @@ endmodule
 
 module Decoder2to4(S, out);
 	input [1:0] S;
-	output [3:0] out;
+	output reg [3:0] out;
 
 	always @ (S) begin
 		case (S)

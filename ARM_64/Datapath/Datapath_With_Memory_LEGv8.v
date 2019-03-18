@@ -25,7 +25,7 @@ module Datapath_With_Memory_LEGv8(ControlWord, data, address, reset, clock, cons
 
 	// Register File Required Inputs
 	wire [4:0] DA, SA, SB;
-	wire W;
+	wire RW;
 
 	// ALU Required Inputs
 	wire Bsel;
@@ -39,19 +39,26 @@ module Datapath_With_Memory_LEGv8(ControlWord, data, address, reset, clock, cons
 	// Tristate signals
 	wire EN_ALU, EN_B, EN_ADDR_ALU, EN_PC;
 
+	wire [3:0] ALU_status, stored_status;
+
+	assign status = {stored_status, EN_ALU}
+
 	// Assign Values from ControlWord
-	assign DA = ControlWord [4:0];
+	assign SB = ControlWord [4:0];
 	assign SA = ControlWord [9:5];
-	assign SB = ControlWord [14:10];
-	assign W = ControlWord [15];
-	assign Bsel = ControlWord [16];
-	assign FS = ControlWord [21:17];
-	assign C0 = ControlWord [22];
+	assign DA = ControlWord [14:10];
+	assign RW = ControlWord [15];
+	assign MW = ControlWord [16];
+	assign size = ControlWord [18:17];
+	assign C0 = ControlWord [19];
+	assign FS = ControlWord [24:20];
+	assign SL = ControlWord [25];
+	assign IL = ControlWord [26];
+	assign Bsel = ControlWord [27];
 	assign chip_select = ControlWord [23];
-	assign EN_ALU = ControlWord [24];
-	assign EN_B = ControlWord [25];
-	assign EN_ADDR_ALU = ControlWord [26];
-	assign size = ControlWord [28:27];
+	// assign EN_ALU = ControlWord [24];
+	// assign EN_B = ControlWord [25];
+	// assign EN_ADDR_ALU = ControlWord [26];
 	assign write_enable = ControlWord [29];
 	assign read_enable = ControlWord [30];
 
@@ -63,7 +70,7 @@ module Datapath_With_Memory_LEGv8(ControlWord, data, address, reset, clock, cons
 
 
 	//            Datapath_LEGv8 (data, address, reset, clock, constant, DA, SA, SB, W, status, FS, C0, Bsel, EN_ALU, EN_B, EN_ADDR_ALU, r0, r1, r2, r3, r4, r5, r6, r7);
-	Datapath_LEGv8 base_datapath (data, address, reset, clock, constant, DA, SA, SB, W, status, FS, C0, Bsel, EN_ALU, EN_B, EN_ADDR_ALU, r0, r1, r2, r3, r4, r5, r6, r7);
+	Datapath_LEGv8 base_datapath (data, address, reset, clock, constant, DA, SA, SB, RW, status, FS, C0, Bsel, EN_ALU, EN_B, EN_ADDR_ALU, r0, r1, r2, r3, r4, r5, r6, r7);
 	
 	//AddressDetect(address, out);
 
