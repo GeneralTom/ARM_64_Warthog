@@ -1,4 +1,4 @@
-module LEGv8_Datapath_TS(ControlWord, data, address, reset, clock, constant, status, IR_out, SR_out, r0, r1, r2, r3, r4, r5, r6, r7); // before r0 -> write_enable, read_enable, size,
+module LEGv8_Datapath_TS(ControlWord, data, address, reset, clock, constant, status, IR_out, current_status, r0, r1, r2, r3, r4, r5, r6, r7); // before r0 -> write_enable, read_enable, size,
 	//                         Datapath_LEGv8 (data, address, reset, clock, constant, status, FS, C0, Bsel, EN_ALU, EN_B, EN_ADDR_ALU, r0, r1, r2, r3, r4, r5, r6, r7);
 	
 	input [31:0] ControlWord; // Combination of control signals
@@ -15,10 +15,9 @@ module LEGv8_Datapath_TS(ControlWord, data, address, reset, clock, constant, sta
 
 	// ALU
 	output [4:0] status; // V - Overflow detection 1 (yes) / 0 (no), C - carry bit, N - Sign bit, Z - 1 (ALU output is zero) / 0 (ALU output isn't zero)
-
+	output [3:0] current_status;
 	// Register Outputs
 	output [31:0] IR_out;
-	output [3:0] SR_out;
 
 	// Visualization outputs
 	output [15:0] r0, r1, r2, r3, r4, r5, r6, r7;
@@ -33,7 +32,7 @@ module LEGv8_Datapath_TS(ControlWord, data, address, reset, clock, constant, sta
 	wire C0;
 	wire SL; // Status Register Load
 
-	wire [3:0] ALU_status;
+	wire [3:0] ALU_status, SR_out;
 	assign status = {SR_out, data_signals[0]};
 
 	// Memory
@@ -68,7 +67,7 @@ module LEGv8_Datapath_TS(ControlWord, data, address, reset, clock, constant, sta
 	Decoder2to4 data_enable (DS, data_signals);
 
 	//            Datapath_LEGv8 (data, address, reset, clock, constant, DA, SA, SB, W, status, FS, C0, IR_out, IL, SR_out, SL, PS, PCsel, Bsel, EN_ALU, EN_B, EN_PC, EN_ADDR_ALU, EN_ADDR_PC, r0, r1, r2, r3, r4, r5, r6, r7);
-	Datapath_LEGv8 base_datapath (data, address, reset, clock, constant, DA, SA, SB, RW, status, FS, C0, IR_out, IL, SR_out, SL, PS, PCsel, Bsel, data_signals[0], data_signals[1], data_signals[2], addr_signals[0], addr_signals[1], r0, r1, r2, r3, r4, r5, r6, r7);
+	Datapath_LEGv8 base_datapath (data, address, reset, clock, constant, DA, SA, SB, RW, current_status, FS, C0, IR_out, IL, SR_out, SL, PS, PCsel, Bsel, data_signals[0], data_signals[1], data_signals[2], addr_signals[0], addr_signals[1], r0, r1, r2, r3, r4, r5, r6, r7);
 	defparam base_datapath.PC_RESET_VALUE = 32'h00000000;
 
 	//   RAM_64bit(clock, address, data, chip_select, write_enable, output_enable, size);
