@@ -10,11 +10,11 @@ module RAM_Detect(data, address, mem_write, mem_read, size, clock);
 
 	wire chip_select;
 
-	AddressDetect detRAM(address, chip_select);
+	AddressDetect detRAM (address, chip_select);
 	defparam detRAM.base_address = BASE_ADDR;
 	defparam detRAM.address_mask = 32'hFFFFFFFF << ADDR_WIDTH;
 
-	RAM_64bit detRAM(clock, address, data, chip_select, write_enable, output_enable, size);
-	defparam detRAM.ADDR_WIDTH = ADDR_WIDTH;
+	RAM_64bit RAM (clock, address, data, chip_select, mem_write, mem_read, size);
+	defparam RAM.ADDR_WIDTH = ADDR_WIDTH;
 endmodule
 
