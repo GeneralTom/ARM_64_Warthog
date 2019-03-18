@@ -42,6 +42,7 @@ module Datapath_LEGv8 (data, address, reset, clock, constant, DA, SA, SB, W, sta
 	input EN_B;
 	input EN_ADDR_ALU;
 	input EN_PC;
+	input EN_ADDR_PC;
 
 	// Visualization outputs
 	output [15:0] r0, r1, r2, r3, r4, r5, r6, r7;
@@ -62,7 +63,7 @@ module Datapath_LEGv8 (data, address, reset, clock, constant, DA, SA, SB, W, sta
 
 	// Address bus tristates
 	assign address = EN_ADDR_ALU ? F[31:0] : 32'bz;
-	assign address = EN_ADDR_PC
+	assign address = EN_ADDR_PC ? IR_out[31:0] : 32'bz;
 
 	// Instruction Register
 	RegisterNbit IR (IR_out, data[31:0], IL, reset, clock);
@@ -73,7 +74,7 @@ module Datapath_LEGv8 (data, address, reset, clock, constant, DA, SA, SB, W, sta
 	defparam SR.N = 4;
 
 	// Program Counter input value
-	mux2to1_32bit PC_select (PC_in, PCselect, A [31:0], constant [31:0])
+	mux2to1_32bit PC_select (PC_in, PCselect, REG_A_bus[31:0], constant [31:0]);
 
 	Program_Counter PC (PC_out, PC_in, PS, clock, reset);
 	defparam PC.PC_RESET_ADDR = PC_RESET_VALUE;

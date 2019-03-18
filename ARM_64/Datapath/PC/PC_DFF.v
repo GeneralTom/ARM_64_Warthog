@@ -1,5 +1,5 @@
 module PC_DFF(Q, D, clock, reset);
-	reg [31:0] Q;
+	output reg [31:0] Q;
 	input [31:0] D;
 	input clock, reset;
 	parameter PC_RESET_VALUE = 32'h00000000;

@@ -5,7 +5,7 @@ module ROM_Detect(data, address, mem_read, size, clock);
 	output [63:0] data;
 	input [31:0] address;
 	input [1:0] size;
-	input clock;
+	input mem_read, clock;
 
 	wire [63:0] data_rom;
 	wire chip_select;

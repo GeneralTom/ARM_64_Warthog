@@ -14,7 +14,7 @@ module LEGv8_Datapath_TS(ControlWord, data, address, reset, clock, constant, sta
 	input [63:0] constant;
 
 	// ALU
-	output [3:0] status; // V - Overflow detection 1 (yes) / 0 (no), C - carry bit, N - Sign bit, Z - 1 (ALU output is zero) / 0 (ALU output isn't zero)
+	output [4:0] status; // V - Overflow detection 1 (yes) / 0 (no), C - carry bit, N - Sign bit, Z - 1 (ALU output is zero) / 0 (ALU output isn't zero)
 
 	// Register Outputs
 	output [31:0] IR_out;
@@ -33,8 +33,8 @@ module LEGv8_Datapath_TS(ControlWord, data, address, reset, clock, constant, sta
 	wire C0;
 	wire SL; // Status Register Load
 
-	wire [3:0] ALU_status, stored_status;
-	assign status = {stored_status, EN_ALU};
+	wire [3:0] ALU_status;
+	assign status = {SR_out, data_signals[0]};
 
 	// Memory
 	wire MW;
