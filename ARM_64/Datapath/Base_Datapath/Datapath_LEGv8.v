@@ -50,9 +50,6 @@ module Datapath_LEGv8 (data, address, reset, clock, constant, DA, SA, SB, W, sta
 	// ALU wires
 	wire [63:0] REG_A_bus, REG_B_bus, ALU_B_bus, F;
 
-	// Status Register Wires
-	wire [3:0] SR_out;
-
 	// Program Counter wires
 	wire [31:0] PC_in, PC_out;
 

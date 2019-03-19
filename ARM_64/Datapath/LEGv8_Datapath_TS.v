@@ -1,7 +1,7 @@
 module LEGv8_Datapath_TS(ControlWord, data, address, reset, clock, constant, status, IR_out, current_status, r0, r1, r2, r3, r4, r5, r6, r7); // before r0 -> write_enable, read_enable, size,
 	//                         Datapath_LEGv8 (data, address, reset, clock, constant, status, FS, C0, Bsel, EN_ALU, EN_B, EN_ADDR_ALU, r0, r1, r2, r3, r4, r5, r6, r7);
 	
-	input [31:0] ControlWord; // Combination of control signals
+	input [39:0] ControlWord; // Combination of control signals
 
 	// Main Outputs
 	inout [63:0] data; // Set to inout because read/write from memory
@@ -33,7 +33,6 @@ module LEGv8_Datapath_TS(ControlWord, data, address, reset, clock, constant, sta
 	wire SL; // Status Register Load
 
 	wire [3:0] ALU_status, SR_out;
-	assign status = {SR_out, data_signals[0]};
 
 	// Memory
 	wire MW;
@@ -65,6 +64,8 @@ module LEGv8_Datapath_TS(ControlWord, data, address, reset, clock, constant, sta
 	Decoder1to2 addr_enable (AS, addr_signals);
 
 	Decoder2to4 data_enable (DS, data_signals);
+
+	assign status = {SR_out, data_signals[0]};
 
 	//            Datapath_LEGv8 (data, address, reset, clock, constant, DA, SA, SB, W, status, FS, C0, IR_out, IL, SR_out, SL, PS, PCsel, Bsel, EN_ALU, EN_B, EN_PC, EN_ADDR_ALU, EN_ADDR_PC, r0, r1, r2, r3, r4, r5, r6, r7);
 	Datapath_LEGv8 base_datapath (data, address, reset, clock, constant, DA, SA, SB, RW, current_status, FS, C0, IR_out, IL, SR_out, SL, PS, PCsel, Bsel, data_signals[0], data_signals[1], data_signals[2], addr_signals[0], addr_signals[1], r0, r1, r2, r3, r4, r5, r6, r7);

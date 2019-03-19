@@ -1,5 +1,5 @@
 module LEGv8_Datapath_TS_testbench();
-	reg [31:0] ControlWord;
+	reg [39:0] ControlWord;
 
 	tri [63:0] data;
 	wire [31:0] address;
@@ -8,12 +8,13 @@ module LEGv8_Datapath_TS_testbench();
 	wire [1:0] size;
 
 	// ALU
-	wire [3:0] status;
+	wire [4:0] status;
 
 	reg [63:0] constant;
-	reg [31:0] IR_out;
-	reg [3:0] SR_out;
 	reg clock, reset;
+
+	wire [31:0] IR_out;
+	wire [3:0] SR_out;
 
 	wire [15:0] r0, r1, r2, r3, r4, r5, r6, r7;
 
@@ -42,6 +43,7 @@ module LEGv8_Datapath_TS_testbench();
         #10
 
         // M[R31 + constant] <-- R1
+        ControlWord <= 40'b000_000_0_01_00_0_1_0_0_01000_0_11_1_0_00000_11111_00001;
         // ControlWord <= 32'b00111_1_1_0_1_0_01000_1_0_00001_11111_00000;
         #10
 
