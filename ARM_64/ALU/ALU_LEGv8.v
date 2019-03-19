@@ -58,13 +58,13 @@ module Adder(S, Cout, A, B, Cin);
 	output [N-1:0] S;
 	output Cout;
 	
-	wire [N-1:0]carry;
+	wire [N:0]carry;
 	assign carry[0] = Cin;
-	assign Cout = carry[N-1];
+	assign Cout = carry[N];
 	// use generate block to instantiate 64 full adders
 	genvar i;
 	generate
-	for (i=0; i<N-1; i=i+1) begin: full_adders // blocks within a generate block need to be named
+	for (i=0; i<N; i=i+1) begin: full_adders // blocks within a generate block need to be named
 		FullAdder adder_inst (S[i], carry[i+1], A[i], B[i], carry[i]);	
 	end
 	endgenerate

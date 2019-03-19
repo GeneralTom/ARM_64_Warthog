@@ -3,9 +3,6 @@ module LEGv8_Datapath_TS_testbench();
 
 	tri [63:0] data;
 	wire [31:0] address;
-	wire mem_write;
-	wire mem_read;
-	wire [1:0] size;
 
 	// ALU
 	wire [4:0] status;
@@ -14,11 +11,11 @@ module LEGv8_Datapath_TS_testbench();
 	reg clock, reset;
 
 	wire [31:0] IR_out;
-	wire [3:0] SR_out;
+	wire [3:0] current_status;
 
 	wire [15:0] r0, r1, r2, r3, r4, r5, r6, r7;
 
-	LEGv8_Datapath_TS dut (ControlWord, data, address, reset, clock, constant, status, IR_out, SR_out, r0, r1, r2, r3, r4, r5, r6, r7);
+	LEGv8_Datapath_TS dut (ControlWord, data, address, reset, clock, constant, status, IR_out, current_status, r0, r1, r2, r3, r4, r5, r6, r7);
 
 	initial begin
 		clock <= 1'b0;

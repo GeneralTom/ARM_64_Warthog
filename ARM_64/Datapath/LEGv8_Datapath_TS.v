@@ -73,10 +73,10 @@ module LEGv8_Datapath_TS(ControlWord, data, address, reset, clock, constant, sta
 
 	//   RAM_64bit(clock, address, data, chip_select, write_enable, output_enable, size);
 	RAM_Detect ram (data, address, MW, data_signals[3], size, clock);
-	defparam ram.BASE_ADDR = 32'h20000000;
+	defparam ram.BASE_ADDR = 32'h00000000;
 	defparam ram.ADDR_WIDTH = 10;
 
 	ROM_Detect rom (data, address, data_signals[3], size, clock);
-	defparam rom.BASE_ADDR = 32'h00000000;
+	defparam rom.BASE_ADDR = 32'h20000000;
 	defparam rom.ADDR_WIDTH = 8;
 endmodule
