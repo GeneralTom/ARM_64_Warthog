@@ -66,16 +66,17 @@ module Datapath_LEGv8 (data, address, reset, clock, constant, DA, SA, SB, W, sta
 	RegisterNbit IR (IR_out, data[31:0], IL, reset, clock);
 	defparam IR.N = 32;
 
-	// Program Counter input value
-	mux2to1_32bit PC_select (PC_in, PCselect, REG_A_bus[31:0], constant [31:0]);
-
-	Program_Counter PC (PC_out, PC_in, PS, clock, reset);
-	defparam PC.PC_RESET_ADDR = PC_RESET_VALUE;
-
 	// ALU B input value
 	mux2to1_64bit b_select (ALU_B_bus, Bsel, REG_B_bus, constant);
 
 	RegisterFile32x64 leg_reg (REG_A_bus, REG_B_bus, SA, SB, data, DA, W, reset, clock, r0, r1, r2, r3, r4, r5, r6, r7);
+	
+	// Program Counter input value
+	mux2to1_32bit PC_select (PC_in, PCsel, REG_A_bus [31:0], constant [31:0]);
+
+	Program_Counter PC (PC_out, PC_in, PS, clock, reset);
+	defparam PC.PC_RESET_ADDR = PC_RESET_VALUE;
+
 	ALU_LEGv8 leg_alu (REG_A_bus, ALU_B_bus, FS, C0, F, status);
 
 	// Status Register

@@ -14,7 +14,7 @@ module Program_Counter(out, in, PS, clock, reset);
 
 	mux2to1_32bit mux3 (mux3out, PS[0], mux1out, adder_out);
 
-	Adder adder_32 (adder_out, cout, out, mux2out, 0);
+	Adder adder_32 (adder_out, cout, out, mux2out, 1'b0);
 	defparam adder_32.N = 32;
 	
 	PC_DFF pc_dff (out, mux3out, clock, reset);
