@@ -56,11 +56,11 @@ module Datapath_LEGv8 (data, address, reset, clock, constant, DA, SA, SB, W, sta
 	// Data bus tristates
 	assign data = EN_ALU ? F : 64'bz;
 	assign data = EN_B ? REG_B_bus : 64'bz;
-	assign data = EN_PC ? PC_out : 64'bz;
+	assign data = EN_PC ? {32'b0, PC_out} : 64'bz;
 
 	// Address bus tristates
 	assign address = EN_ADDR_ALU ? F[31:0] : 32'bz;
-	assign address = EN_ADDR_PC ? IR_out[31:0] : 32'bz;
+	assign address = EN_ADDR_PC ? PC_out : 32'bz;
 
 	// Instruction Register
 	RegisterNbit IR (IR_out, data[31:0], IL, reset, clock);

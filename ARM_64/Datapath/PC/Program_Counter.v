@@ -17,6 +17,6 @@ module Program_Counter(out, in, PS, clock, reset);
 	Adder adder_32 (adder_out, cout, out, mux2out, 0);
 	defparam adder_32.N = 32;
 	
-	PC_DFF pc_dff (mux3out, out, clock, reset);
+	PC_DFF pc_dff (out, mux3out, clock, reset);
 	defparam pc_dff.PC_RESET_VALUE = PC_RESET_ADDR;
 endmodule
