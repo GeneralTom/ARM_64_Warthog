@@ -19,10 +19,10 @@ module LEGv8_ControlUnit_TS_testbench ();
 	always begin
 		#5
 		reset <= 1'b0;
-		#10
+		#5
 		instruction <= 32'b10001011000_11111_000000_00010_00000;
 
-		#10
+		#20
 		instruction <= 32'b11001011000_00000_000000_11111_00000;
 
 		#10
