@@ -7,7 +7,7 @@ module ControlUnit_LEGv8(ControlWord, ControlWord1, ControlWord2, ControlWord3, 
 
 	wire [2:0] state_in, previous_state;
 
-	wire [39:0] ControlWord_IF = 40'b000_001_0_01_00_0_0_1_0_00000_0_11_0_0_00000_00000_00001;
+	wire [39:0] ControlWord_IF = 40'b000_001__11_00_0_0_1_0_00000_0_11_0_0_00000_00000_00000;
 
 	assign state_in = ControlWord [CW_LENGTH-4:CW_LENGTH-6];
 
