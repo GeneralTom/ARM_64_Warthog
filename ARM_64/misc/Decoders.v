@@ -36,3 +36,31 @@ module Decoder5to32(m, S, en);
 	assign m[30]=  S[4]& S[3]& S[2]& S[1]&~S[0]&en;
 	assign m[31]=  S[4]& S[3]& S[2]& S[1]& S[0]&en;
 endmodule
+
+module Decoder1to2(S, out);
+	input S;
+	output reg [1:0] out;
+
+	always @ (S) begin
+		case (S)
+			1'b0: out = 2'b01;
+			1'b1: out = 2'b10;
+			default: out = 2'b00;
+		endcase
+	end
+endmodule
+
+module Decoder2to4(S, out);
+	input [1:0] S;
+	output reg [3:0] out;
+
+	always @ (S) begin
+		case (S)
+			2'b00: out = 4'b0001;
+			2'b01: out = 4'b0010;
+			2'b10: out = 4'b0100;
+			2'b11: out = 4'b1000;
+			default: out = 4'b0000;
+		endcase
+	end
+endmodule

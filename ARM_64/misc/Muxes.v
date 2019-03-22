@@ -75,3 +75,20 @@ module mux2to1_64bit(F, S, I0, I1);
 	
 	assign F = S ? I1 : I0;
 endmodule
+
+module mux2to1_32bit(F, S, I0, I1);
+	input [31:0] I0, I1;
+	input S;
+	output [31:0] F;
+	
+	assign F = S ? I1 : I0;
+endmodule
+
+module mux2to1_Nbit(F, S, I0, I1);
+	parameter N = 32;
+	input [N-1:0] I0, I1;
+	input S;
+	output [N-1:0] F;
+	
+	assign F = S ? I1 : I0;
+endmodule
