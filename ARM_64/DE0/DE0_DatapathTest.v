@@ -1,8 +1,8 @@
-module DE0_DatapathTest(CLOCK_50, LEDG, SW, KEY, GPIO_0, GPIO_1, HEX0, HEX1, HEX2, HEX3);
+module DE0_DatapathTest(CLOCK_50, LEDG, SW, BUTTON, GPIO_0, GPIO_1, HEX0, HEX1, HEX2, HEX3);
 	// connection names for DE0 FPGA board - names must match pin assignment file
 	input CLOCK_50;
 	input [9:0] SW;
-	input [2:0] KEY;
+	input [2:0] BUTTON;
 	inout [31:0] GPIO_1;
 	output [31:0] GPIO_0;
 	output [9:0] LEDG;
@@ -11,14 +11,14 @@ module DE0_DatapathTest(CLOCK_50, LEDG, SW, KEY, GPIO_0, GPIO_1, HEX0, HEX1, HEX
 	// use button 0 for reset and 2 for clock
 	wire clock, reset;
 	// buttons are active low so invert them to get possitive logic
-	assign clock = ~KEY[2];
-	assign reset = ~KEY[0];
+	assign clock = ~BUTTON[2];
+	assign reset = ~BUTTON[0];
 	
 	// create wires for memory interface
 	tri [63:0] data;
 	wire [31:0] address;
-	wire mem_read, mem_write;
-	wire [1:0] size;
+	// wire mem_read, mem_write;
+	// wire [1:0] size;
 	
 	// create remaining wires for datapath inteface
 	wire [63:0] constant;
@@ -81,16 +81,18 @@ module DE0_DatapathTest(CLOCK_50, LEDG, SW, KEY, GPIO_0, GPIO_1, HEX0, HEX1, HEX
 	);
 	
 	// connect the lower 32-bits of the control word to the 32 DIP switches on the GPIO board
-	assign ControlWord[31:0] = DIP_SW[31:0];
+	assign ControlWord[39:0] = {SW[7:0], DIP_SW[31:0]};
 	// if there are more than 32-bits to the control word connect them to SW[9:0]
 	// in my case there was only one more bit so it is connected to SW[0]
 	// if your control word is 32-bits or less remove the following line
-	assign ControlWord[39:32] = SW[7:0];
+	// assign ControlWord[39:32] = SW[7:0];
 	// make the constant constant
 	// alternatively some of the constant bits could be connected to switches (SW) to allow it to be changed
 	assign constant = 64'd24;
 	// connect the status bits to the LEDs
 	assign LEDG[4:0] = status;
+
+	assign LEDG[9] = clock;
 	
 	/////////// This line should be completely replaced with your datapath and the
 	/////////// connection order appropriate using the names from this file
