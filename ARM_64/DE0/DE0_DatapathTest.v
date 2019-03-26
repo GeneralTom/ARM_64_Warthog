@@ -60,7 +60,7 @@ module DE0_DatapathTest(CLOCK_50, LEDG, SW, BUTTON, GPIO_0, GPIO_1, HEX0, HEX1, 
 	// display lower 16 bits of address on hex 3:0 (on GPIO board)
 	quad_7seg_decoder address_decoder_low (address[15:0], h3, h2, h1, h0);
 	// display lower 16 bits of data on HEX 3:0 (on DE0 itself)
-	quad_7seg_decoder data_decoder (address[15:0], hex3, hex2, hex1, hex0);
+	quad_7seg_decoder data_decoder (data[15:0], hex3, hex2, hex1, hex0);
 	assign HEX0 = ~hex0; // each signal must be inverted because DE0 hex's are active low
 	assign HEX1 = ~hex1;
 	assign HEX2 = ~hex2;
@@ -92,6 +92,7 @@ module DE0_DatapathTest(CLOCK_50, LEDG, SW, BUTTON, GPIO_0, GPIO_1, HEX0, HEX1, 
 	// connect the status bits to the LEDs
 	assign LEDG[4:0] = status;
 
+	assign LEDG[8] = reset;
 	assign LEDG[9] = clock;
 	
 	/////////// This line should be completely replaced with your datapath and the
