@@ -19,8 +19,7 @@ module GPIO_Board(
 	DIP_SW, // 32x DIP switch output
 	LEDS, // 32x LED input
 	GPIO_0, // (output) connect to GPIO0_D
-	GPIO_1, // (input/output) connect to GPIO1_D
-	BUTTON0, BUTTON1
+	GPIO_1 // (input/output) connect to GPIO1_D
 	);
 	// if desiring to use the display (Matrix/Hex) portion of the GPIO board 
 	// without the LEDs/Switches to free up GPIO pins then plug the GPIO board 
@@ -41,19 +40,8 @@ module GPIO_Board(
 	output [31:0]GPIO_0;
 	// input/output to GPIO1 for reading the switches and controlling the LEDs
 	inout wire [31:0] GPIO_1;
-
-	// Custom wires, registers, and IO
-	input BUTTON0, BUTTON1;
-
-	reg [39:0] ControlWord;
-	tri [63:0] data;
-	wire [31:0] address;
-
-	reg constant = 64'h00000018;
 	
-	// Datapath instance
-	LEGv8_Datapath_TS legv8 (ControlWord, data, address, BUTTON1, BUTTON0, constant, );
-
+	
 	// create a 17 bit counter to manage the timing of displaying the information
 	// bits 16:14 will be used at the 3 bit row counter / signal multiplexer select
 	// bits 13:11 will be used to disable the row output right before and right after
