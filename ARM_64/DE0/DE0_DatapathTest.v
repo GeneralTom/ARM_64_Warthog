@@ -23,12 +23,13 @@ module DE0_DatapathTest(CLOCK_50, LEDG, SW, KEY, GPIO_0, GPIO_1, HEX0, HEX1, HEX
 	// create remaining wires for datapath inteface
 	wire [63:0] constant;
 	wire [4:0] status; // 5 bits: {V, C, N, Z, Znot_registered}
+	wire [3:0] current_status;
 	wire [31:0] instruction;
 	//////////// CHANGE THE NUMBER OF BITS TO MATCH YOUR CONTROL WORD ///////////
-	wire [32:0] ControlWord;
+	wire [39:0] ControlWord;
 	//////////// OPTIONAL PROGRAM COUNTER OUTPUT - NOT USED FOR THIS TEST ///////
 	//////////// REMOVE THIS IF YOUR DATAPATH DOESN'T HAVE THIS SIGNAL //////////
-	wire [15:0] PC_out;
+	// wire [15:0] PC_out;
 	//////////// if your datapath has any other signals besides:
 	// ControlWord (input)
 	// constant (input)
@@ -84,7 +85,7 @@ module DE0_DatapathTest(CLOCK_50, LEDG, SW, KEY, GPIO_0, GPIO_1, HEX0, HEX1, HEX
 	// if there are more than 32-bits to the control word connect them to SW[9:0]
 	// in my case there was only one more bit so it is connected to SW[0]
 	// if your control word is 32-bits or less remove the following line
-	assign ControlWord[32] = SW[0];
+	assign ControlWord[39:32] = SW[7:0];
 	// make the constant constant
 	// alternatively some of the constant bits could be connected to switches (SW) to allow it to be changed
 	assign constant = 64'd24;
@@ -93,5 +94,7 @@ module DE0_DatapathTest(CLOCK_50, LEDG, SW, KEY, GPIO_0, GPIO_1, HEX0, HEX1, HEX
 	
 	/////////// This line should be completely replaced with your datapath and the
 	/////////// connection order appropriate using the names from this file
-	DatapathWithMem datapath (ControlWord, constant, status, instruction, data, address, mem_write, mem_read, size, clock, reset, PC_out, r0, r1, r2, r3, r4, r5, r6, r7);
+	// DatapathWithMem datapath (ControlWord, constant, status, instruction, data, address, mem_write, mem_read, size, clock, reset, PC_out, r0, r1, r2, r3, r4, r5, r6, r7);
+							// ControlWord, data, address, reset, clock, constant, status, IR_out, current_status, r0, r1, r2, r3, r4, r5, r6, r7);
+	LEGv8_Datapath_TS datapath (ControlWord, data, address, reset, clock, constant, status, instruction, current_status, r0, r1, r2, r3, r4, r5, r6, r7);
 endmodule
