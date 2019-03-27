@@ -1,10 +1,10 @@
-module DE0_DatapathTest(CLOCK_50, LEDG, SW, BUTTON, GPIO_0, GPIO_1, HEX0, HEX1, HEX2, HEX3);
+module DE0_DatapathTest(CLOCK_50, LEDG, SW, BUTTON, GPIO0_D, GPIO1_D, HEX0, HEX1, HEX2, HEX3);
 	// connection names for DE0 FPGA board - names must match pin assignment file
 	input CLOCK_50;
 	input [9:0] SW;
 	input [2:0] BUTTON;
-	inout [31:0] GPIO_1;
-	output [31:0] GPIO_0;
+	inout [31:0] GPIO1_D;
+	output [31:0] GPIO0_D;
 	output [9:0] LEDG;
 	output [6:0] HEX0, HEX1, HEX2, HEX3;
 	
@@ -76,8 +76,8 @@ module DE0_DatapathTest(CLOCK_50, LEDG, SW, BUTTON, GPIO_0, GPIO_1, HEX0, HEX1, 
 		h6, 1'b0, h7, 1'b0, 
 		DIP_SW, // 32x DIP switch output
 		instruction, // 32x LED input (show the IR output)
-		GPIO_0, // (output) connect to GPIO_0
-		GPIO_1 // (input/output) connect to GPIO_1
+		GPIO0_D, // (output) connect to GPIO_0
+		GPIO1_D // (input/output) connect to GPIO_1
 	);
 	
 	// connect the lower 32-bits of the control word to the 32 DIP switches on the GPIO board
