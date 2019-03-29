@@ -18,9 +18,8 @@ module GPIO_Board(
 	HEX6, HEX6_DP, HEX7, HEX7_DP, 
 	DIP_SW, // 32x DIP switch output
 	LEDS, // 32x LED input
-	GPIO_0, // (output) connect to GPIO0_D
-	GPIO_1, // (input/output) connect to GPIO1_D
-	BUTTON0, BUTTON1
+	GPIO0_D, // (output) connect to GPIO0_D
+	GPIO1_D // (input/output) connect to GPIO1_D
 	);
 	// if desiring to use the display (Matrix/Hex) portion of the GPIO board 
 	// without the LEDs/Switches to free up GPIO pins then plug the GPIO board 
@@ -38,22 +37,11 @@ module GPIO_Board(
 	// outputs from the DIP switches (updated every 2.6ms or 380Hz)
 	output [31:0] DIP_SW;
 	// output to GPIO0 for controlling the Matrix/Hex displays
-	output [31:0]GPIO_0;
+	output [31:0] GPIO0_D;
 	// input/output to GPIO1 for reading the switches and controlling the LEDs
-	inout wire [31:0] GPIO_1;
-
-	// Custom wires, registers, and IO
-	input BUTTON0, BUTTON1;
-
-	reg [39:0] ControlWord;
-	tri [63:0] data;
-	wire [31:0] address;
-
-	reg constant = 64'h00000018;
+	inout wire [31:0] GPIO1_D;
 	
-	// Datapath instance
-	LEGv8_Datapath_TS legv8 (ControlWord, data, address, BUTTON1, BUTTON0, constant, );
-
+	
 	// create a 17 bit counter to manage the timing of displaying the information
 	// bits 16:14 will be used at the 3 bit row counter / signal multiplexer select
 	// bits 13:11 will be used to disable the row output right before and right after
@@ -115,7 +103,7 @@ module GPIO_Board(
 	assign row = row_gate ? rowa : 8'b0;
 	
 	// connect the signals to the GPIO0 output
-	assign GPIO_0 = {hex_segments, matrix_columns, row};
+	assign GPIO0_D = {hex_segments, matrix_columns, row};
 	
 	// make a temporary output that will be connected to GPIO_1
 	// the majority of the time the output should drive the GPIO_1
@@ -141,7 +129,7 @@ module GPIO_Board(
 	always @(posedge count[6]) begin
 		if(count[16:6] == 1) begin
 			// sample the switches 320ns after the output is turned to high-impedance
-			input_from_switches <= GPIO_1; 
+			input_from_switches <= GPIO1_D; 
 		end
 	end
 	
@@ -151,7 +139,7 @@ module GPIO_Board(
 	generate
 	genvar i;
 	for(i = 0; i < 32; i = i + 1) begin : gen1
-		assign GPIO_1[i] = output_to_leds[31-i];
+		assign GPIO1_D[i] = output_to_leds[31-i];
 		assign DIP_SW[i] = input_from_switches[31-i];
 	end
 	endgenerate
