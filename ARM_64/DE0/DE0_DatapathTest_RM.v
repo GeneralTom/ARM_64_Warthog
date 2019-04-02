@@ -26,7 +26,7 @@ module DE0_DatapathTest_RM(CLOCK_50, LEDG, SW, BUTTON, GPIO0_D, GPIO1_D, HEX0, H
 	wire [3:0] current_status;
 	wire [31:0] instruction;
 	//////////// CHANGE THE NUMBER OF BITS TO MATCH YOUR CONTROL WORD ///////////
-	wire [39:0] ControlWord;
+	wire [33:0] ControlWord;
 	//////////// OPTIONAL PROGRAM COUNTER OUTPUT - NOT USED FOR THIS TEST ///////
 	//////////// REMOVE THIS IF YOUR DATAPATH DOESN'T HAVE THIS SIGNAL //////////
 	// wire [15:0] PC_out;
@@ -81,7 +81,7 @@ module DE0_DatapathTest_RM(CLOCK_50, LEDG, SW, BUTTON, GPIO0_D, GPIO1_D, HEX0, H
 	);
 
 	// connect the lower 32-bits of the control word to the 32 DIP switches on the GPIO board
-	assign ControlWord[39:0] = {SW[7:0], DIP_SW[31:0]};
+	assign ControlWord[33:0] = {SW[1:0], DIP_SW[31:0]};
 	// if there are more than 32-bits to the control word connect them to SW[9:0]
 	// in my case there was only one more bit so it is connected to SW[0]
 	// if your control word is 32-bits or less remove the following line

@@ -1,7 +1,7 @@
 module LEGv8_Datapath_RM(ControlWord, data, address, reset, clock, constant, status, IR_out, current_status, r0, r1, r2, r3, r4, r5, r6, r7); // before r0 -> write_enable, read_enable, size,
 	//                         Datapath_LEGv8 (data, address, reset, clock, constant, status, FS, C0, Bsel, EN_ALU, EN_B, EN_ADDR_ALU, r0, r1, r2, r3, r4, r5, r6, r7);
 
-	input [39:0] ControlWord; // Combination of control signals
+	input [33:0] ControlWord; // Combination of control signals
 
 	// Main Outputs
 	inout [63:0] data; // Set to inout because read/write from memory
@@ -52,14 +52,8 @@ module LEGv8_Datapath_RM(ControlWord, data, address, reset, clock, constant, sta
 	wire [1:0] DS; // 00 - Enable ALU on data bus, 01 - Enable B on data bus, 10 - Enable PC on data bus, 11 - Enable memory read on data bus
 	wire [3:0] data_signals;
 
-	// Constant Generator
-	wire [2:0] CGS;
-
-	// Next State Variable
-	wire [2:0] NS;
-
 	// Assign Values from ControlWord
-	assign { CGS, NS, AS, DS, PS, PCsel, Bsel, IL, SL, FS, C0, size, MW, RW, DA, SA, SB } = ControlWord;
+	assign { AS, DS, PS, PCsel, Bsel, IL, SL, FS, C0, size, MW, RW, DA, SA, SB } = ControlWord;
 
 	Decoder1to2 addr_enable (AS, addr_signals);
 
