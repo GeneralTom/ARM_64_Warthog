@@ -131,17 +131,23 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 endmodule
 
 module ConstantGenerator(constant, select, instruction);
-	output [63:0]constant;
-  	input [2:0]select;
-  	input[31:0]instruction;
-	Mux8to1Nbit_constant_mux (
+	output [63:0] constant;
+  	input [2:0] select;
+  	input [31:0] instruction;
+
+	Mux8to1Nbit constant_mux (
   		.F(constant);
   		.S(select);
-  		.I0((52'b0, I[21:10])),
-  		.I1((52'b0, I[21:10])),
+  		.I0({52'b0, I[21:10]}),     	// zf I[21:10]
+  		.I1({52'b0, I[21:10]}),     	// Technically wrong
+  		.I2({48'b0, I[20:5]}), 			// zf I[20:5]
+  		.I3(64'hFFFFFFFFFFFF0000),		// needed for MOV
+  		.I4({{38{I[25]}}, I[25:0]}),	// se I[25:0]
+  		.I5({{45{I[23]}}, I[23:5]}),	// se I[23:5]
+  		.I6({{55{I[20]}}, I[20:12]}),	// se I[20:12]
+  		.I7(64'b0)						// Not used
   	);
-
-
+	defparam constant_mux.N = 64;
 endmodule
 
 module encoder_ex0(select, I28_27_26_25);
@@ -168,7 +174,7 @@ module encoder_branch(select, I30_29_25);
 
 	wire I30, I29, I25;
 	assign (I30, I29, I25) = I30_29_25
-	
+
 	assign S[0] = ;
 	assign S[1] = ;
 endmodule
