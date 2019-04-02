@@ -18,7 +18,7 @@ module DE0_DatapathTest_RM(CLOCK_50, LEDG, SW, BUTTON, GPIO0_D, GPIO1_D, HEX0, H
 	tri [63:0] data;
 	wire [31:0] address;
 	// wire mem_read, mem_write;
-	// wire [1:0] size;
+	// wire [1:0] size; 
 
 	// create remaining wires for datapath inteface
 	wire [63:0] constant;
