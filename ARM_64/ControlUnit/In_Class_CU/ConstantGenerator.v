@@ -1,4 +1,4 @@
-module ControlUnit(control_word,constant,clock,reset);
+/*module ControlUnit(control_word,constant,clock,reset);
   output [33:0] control_word;
   output [63:0] constant;
   input clock, reset;
@@ -130,3 +130,4 @@ module encoder_mem (select, I29_10);
   assign (I29, I28, I24, I21, I11, I10) = I29_28_24_21_11_10;
   assign select = ;
 endmodule // 
+*/

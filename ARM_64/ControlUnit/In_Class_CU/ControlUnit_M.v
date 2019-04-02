@@ -1,4 +1,4 @@
-module ControlUnit();
+/*module ControlUnit();
 	output [33:0] control_word; // not using our cw
 	output [63:0] constant;
 
@@ -120,3 +120,4 @@ module ControlUnit();
 	*/
 
 endmodule
+*/
