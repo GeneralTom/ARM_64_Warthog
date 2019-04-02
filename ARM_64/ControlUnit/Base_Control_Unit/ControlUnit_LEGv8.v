@@ -106,9 +106,17 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 
 	////////////////////////// Main MUX //////////////////////////
 	// IF_CW
-	assign IF_CW = 40'b000_001_1_11_00_0_0_1_0_00000_0_11_0_0_00000_00000_00000;
+				//  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size,  MW,   RW,   DA,   SA,   SB 
+	assign IF_CW = {3'bxxx, 3'b001, 1'b1, 2'b11, 2'b0,  1'b0,  1'b0, 1'b1, 1'b0, 5'bx, 1'bx, 2'b11, 1'b0, 1'b0, 5'bx, 5'bx, 5'bx};
 
-	//////////////////////////////////////////////////////////////
+	// EX1_CW
+				//  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size,  MW,   RW,   DA,   SA,   SB 
+	assign EX1_CW = {};
+
+	///////////////////////// Data Imm. /////////////////////////
+	// Row 2 of TODO
+
+	////////////////////////// Branch //////////////////////////
 	// CBZ & CBNZ
 	wire [1:0] CB_PS; // PS bits
 	assign CB_PS[1] = CB_PS[0];
@@ -116,12 +124,22 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 	// I24 is 0 for CBZ and 1 for CBNZ
 	assign CB_PS[0] = instruction[24] ^ status[0]; // zero status bit
 
-						// CGS, NS,   SL,   IL,   DS,    AS,   PCsel, Bsel, mem_write, size,  RegWrite, PS,    FS,   SB,   SA,   DA
-	assign CBZ_CBNZ_CW = {3'd5, 3'b0, 1'b0, 1'b0, 2'bxx, 1'bx, 1'b1,  1'bz, 1'b0,      2'bxx, 1'b0,     CB_PS, 5'bx, 5'bx, 5'bx, 5'bx}
+						// CGS,   NS,   SL,   IL,   DS,    AS,   PCsel, Bsel, mem_write, size,  RegWrite, PS,    FS,   SB,   SA,   DA
+	//assign CBZ_CBNZ_CW = {3'd5, 3'b0, 1'b0, 1'b0, 2'bxx, 1'bx, 1'b1,  1'bz, 1'b0,      2'bxx, 1'b0,     CB_PS, 5'bx, 5'bx, 5'bx, 5'bx}
+
+	 				  //  CGS,  NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size,  MW,   RW,   DA,   SA,   SB 
+	assign CBZ_CBNZ_CW = {3'd5, 3'b0, 1'bx, 2'bxx, CB_PS, 1'b1,  1'bz, 1'b0, 1'b0, 5'bx, 1'bx, 2'bxx, 1'b0, 1'b0, 5'bx, 5'bx, 5'bx};
+	
+	////////////////////////// Memory //////////////////////////
+	// Row 4 of TODO
+
+	///////////////////////// Data Reg. /////////////////////////
+	// Row 5 of TODO
+
 	//////////////////////////////////////////////////////////////
 
 	/* TODO: implement all of the partial control words
-	IF_CW, EX1_CW
+	EX1_CW
 	ArithImm_CW, LogicImm_CW, MOV_CW
 	B_BL_CW, B_cond_CW, BR_CW
 	LDUR_STUR_CW
