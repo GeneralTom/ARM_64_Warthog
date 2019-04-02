@@ -180,21 +180,21 @@ module encoder_ex0(select, I28_27_26_25);
 	assign S[1] = I27;
 endmodule
 
-module encoder_branch(select, I30_29_25);
+module encoder_branch(select, I30_25);
 	output [1:0] select;
-	input [5:0] I30_29_25;
+	input [5:0] I30_25;
 
-	//map the instruction bits to single wires for readability
-	//only I30, I29, and I25 are needed
+	// map the instruction bits to single wires for readability
+	// only I30, I29, and I25 are needed
+	wire I30, I29, I25;
 	assign I30 = I30_25[5];
 	assign I29 = I30_25[4];
 	assign I25 = I30_25[0];
 
-	wire I30, I29, I25;
-	assign (I30, I29, I25) = I30_29_25
+	// assign (I30, I29, I25) = I30_29_25
 
-	assign S[0] = ;
-	assign S[1] = ;
+	assign S[0] = (I30 & ~I29 & I25) | (~I30 & I29 & ~I25);
+	assign S[1] = I30 & ~I29;
 endmodule
 
 module encoder_mem (select, I29_10);
