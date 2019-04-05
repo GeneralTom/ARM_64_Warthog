@@ -68,9 +68,9 @@ module LEGv8_Datapath_JD(ControlWord, data, address, reset, clock, constant, sta
 	//   RAM_64bit(clock, address, data, chip_select, write_enable, output_enable, size);
 	RAM_Detect ram (data, address, MW, data_signals[3], size, clock);
 	defparam ram.BASE_ADDR = 32'h80000000;
-	defparam ram.ADDR_WIDTH = 16;
+	defparam ram.ADDR_WIDTH = 14;
 
 	ROM_Detect rom (data, address, data_signals[3], size, clock);
 	defparam rom.BASE_ADDR = 32'h60000000;
-	defparam rom.ADDR_WIDTH = 16;
+	defparam rom.ADDR_WIDTH = 14;
 endmodule
