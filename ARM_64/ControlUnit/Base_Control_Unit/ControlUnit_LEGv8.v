@@ -204,5 +204,5 @@ module encoder_mem (select, I29_10);
 	wire I29, I28, I24, I21, I11, I10;
 	assign (I29, I28, I24, I21, I11, I10) = I29_28_24_21_11_10;
 
-	assign select = ;
+	assign select = I29 & I28 & ~I24 & ~I21 & ~I11 & ~I10;
 endmodule
