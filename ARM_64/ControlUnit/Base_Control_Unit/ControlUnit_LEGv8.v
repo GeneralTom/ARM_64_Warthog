@@ -105,18 +105,34 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 	assign MUL_CW = 40'b0;
 
 	////////////////////////// Main MUX //////////////////////////
-	// IF_CW
+	// Instruction Fetch
 				//  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size,  MW,   RW,   DA,   SA,   SB 
 	assign IF_CW = {3'bxxx, 3'b001, 1'b1, 2'b11, 2'b0,  1'b0,  1'b0, 1'b1, 1'b0, 5'bx, 1'bx, 2'b11, 1'b0, 1'b0, 5'bx, 5'bx, 5'bx};
 
 	// EX1_CW
 				//  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size,  MW,   RW,   DA,   SA,   SB 
-	assign EX1_CW = {};
+	// assign EX1_CW = {};
 
 	///////////////////////// Data Imm. /////////////////////////
 	// Row 2 of TODO
+	// Arithmetic Immediate Operators (ADDI, SUBI)
+					   //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,      FS,               C0,    size,          MW,   RW,   DA,     SA,     SB 
+	assign ArithImm_CW = { 3'b000, 3'b000, 1'bx, 2'b00, 2'bxx, 1'bx,  1'b1, 1'b0, I[29], { 4'b0100, I[30] }, I[30], {1'b1, I[31]}, 1'b0, 1'b1, I[4:0], I[9:5], 5'bx };
 
+	// Logical Immediate Operators (AND, OR, XOR)
+	wire ANDS_Set_Flags;
+	assign ANDS_Set_Flags = I[30] & I[29];
+					   //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,       FS,               C0,    size,          MW,   RW,   DA,     SA,     SB 
+	assign LogicImm_CW = { 3'b000, 3'b000, 1'bx, 2'b00, 2'bxx, 1'bx,  1'b1, 1'b0, ANDS_Set_Flags, {  }, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[9:5], 5'bx };
+
+	// MOVZ / MOVK
+				  //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,     size,          MW,   RW,   DA,     SA,   SB 
+	assign MOV_CW = { 3'b011, 3'b010, 1'b1, 2'b00, 2'bxx, 1'bx,  1'b1, 1'b0, 1'b0, 5'bx, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], 5'bx, 5'bx }
 	////////////////////////// Branch //////////////////////////
+	// B / BL
+				   //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,     size,          MW,   RW,   DA,     SA,   SB 
+	assign B_BL_CW = { 3'b000, 3'b000, 1'b1, 2'b11, 2'b11,  }
+
 	// CBZ & CBNZ
 	wire [1:0] CB_PS; // PS bits
 	assign CB_PS[1] = CB_PS[0];
@@ -130,6 +146,10 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 	 				  //  CGS,  NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size,  MW,   RW,   DA,   SA,   SB 
 	assign CBZ_CBNZ_CW = {3'd5, 3'b0, 1'bx, 2'bxx, CB_PS, 1'b1,  1'bz, 1'b0, 1'b0, 5'bx, 1'bx, 2'bxx, 1'b0, 1'b0, 5'bx, 5'bx, 5'bx};
 	
+	// B.cond
+	
+		 			 //  CGS,    NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size,  MW,   RW,   DA,   SA,   SB 
+	assign B_cond_CW = { 3'b100, 3'b0,  }
 	////////////////////////// Memory //////////////////////////
 	// Row 4 of TODO
 
@@ -140,7 +160,7 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 
 	/* TODO: implement all of the partial control words
 	EX1_CW
-	ArithImm_CW, LogicImm_CW, MOV_CW
+	ArithImm_CW (Done), LogicImm_CW, MOV_CW
 	B_BL_CW, B_cond_CW, BR_CW
 	LDUR_STUR_CW
 	LogicReg_CW, ArithReg_CW
