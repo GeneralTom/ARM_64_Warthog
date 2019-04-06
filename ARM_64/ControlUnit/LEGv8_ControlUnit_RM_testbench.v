@@ -1,10 +1,10 @@
-module LEGv8_ControlUnit_TS_testbench ();
+module LEGv8_ControlUnit_RM_testbench ();
 	wire [39:0] ControlWord;
 	reg [31:0] instruction;
 	reg [4:0] status;
 	reg reset, clock;
 
-	LEGv8_ControlUnit_TS dut (ControlWord, instruction, status, reset, clock);
+	LEGv8_ControlUnit_RM dut (ControlWord, instruction, status, reset, clock);
 
 	initial begin
 		instruction <= 32'b0;
@@ -120,7 +120,7 @@ module LEGv8_ControlUnit_TS_testbench ();
 		//B.cond
 		instruction <= 32'b01010100_0000000000000000000_00000;
 		#10
-//END CONDITIONAL BRANCH -------------------------------------
+//END CONDITIONAL BRANCH --------------------------------------
 
 //BEGIN UNCONDITIONAL JUMP ------------------------------------
 		//B
