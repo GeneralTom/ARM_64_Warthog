@@ -114,7 +114,6 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 	// assign EX1_CW = {};
 
 	///////////////////////// Data Imm. /////////////////////////
-	// Row 2 of TODO
 	// Arithmetic Immediate Operators (ADDI, SUBI)
 					   //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,      FS,               C0,    size,          MW,   RW,   DA,     SA,     SB 
 	assign ArithImm_CW = { 3'b000, 3'b000, 1'bx, 2'b00, 2'bxx, 1'bx,  1'b1, 1'b0, I[29], { 4'b0100, I[30] }, I[30], {1'b1, I[31]}, 1'b0, 1'b1, I[4:0], I[9:5], 5'bx };
@@ -147,7 +146,6 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 	assign CBZ_CBNZ_CW = { 3'd5, 3'b0, 1'bx, 2'bxx, CB_PS, 1'b1,  1'bz, 1'b0, 1'b0, 5'bx, 1'bx, 2'bxx, 1'b0, 1'b0, 5'bx, 5'bx, 5'bx };
 	
 	// B.cond
-	
 		 			 //  CGS,    NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size,  MW,   RW,   DA,   SA,   SB 
 	assign B_cond_CW = { 3'b100, 3'b0,  };
 
@@ -156,15 +154,18 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 	assign BR_CW = { 3'b0, 3'b0, 1'bx, 2'bxx, 2'b11, 1'b0,  1'bx, 1'b0, 1'b0, 5'bx, 1'bx, 2'bx, 1'b0, 1'b0, 5'bx, I[9:5], 5'bx }
 
 	////////////////////////// Memory //////////////////////////
-	// Row 4 of TODO
 	// LDUR / STUR
 				 	    //  CGS,  NS,   AS,     DS,            PS,   PCsel, Bsel, IL,   SL,   FS,   C0,   size,     MW,     RW,    DA,     SA,     SB 
 	assign LDUR_STUR_CW = { 3'b0, 3'b0, 1'b0, { I[22], 1'b1 }, 2'bx, 1'bx,  1'bx, 1'b0, 1'b0, 5'bx, 1'bx, I[31:30], ~I[22], I[22], I[4:0], I[9:5], 5'bx };
 
 	///////////////////////// Data Reg. /////////////////////////
-	// Row 5 of TODO
 	// Logical Register
-	assign LogicReg_CW = 
+				 	   //  CGS,  NS,   AS,   DS,    PS,   PCsel, Bsel, IL,   SL,     FS,   C0,   size,     MW,     RW,    DA,     SA,     SB 
+	assign LogicReg_CW = { 3'b0, 3'b0, 1'bx, 2'b00, 2'bx, 1'bx,  1'b0, 1'b0, 1'b0, {  }, , { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[20:16], I[9:5] };
+
+	// Arithmetic Register
+				 	   //  CGS,  NS,   AS,   DS,    PS,   PCsel, Bsel, IL,   SL,     FS,               C0,      size,          MW,   RW,   DA,     SA,       SB 
+	assign ArithReg_CW = { 3'b0, 3'b0, 1'bx, 2'b00, 2'bx, 1'bx,  1'b0, 1'b0, 1'b0, { 4'b0100, I[30] }, I[30], { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[20:16], I[9:5] };
 
 	//////////////////////////////////////////////////////////////
 
