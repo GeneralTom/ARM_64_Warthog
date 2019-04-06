@@ -127,11 +127,11 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 
 	// MOVZ / MOVK
 				  //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,     size,          MW,   RW,   DA,     SA,   SB 
-	assign MOV_CW = { 3'b011, 3'b010, 1'b1, 2'b00, 2'bxx, 1'bx,  1'b1, 1'b0, 1'b0, 5'bx, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], 5'bx, 5'bx }
+	assign MOV_CW = { 3'b011, 3'b010, 1'b1, 2'b00, 2'bxx, 1'bx,  1'b1, 1'b0, 1'b0, 5'bx, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], 5'bx, 5'bx };
 	////////////////////////// Branch //////////////////////////
 	// B / BL
-				   //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,     size,          MW,   RW,   DA,     SA,   SB 
-	assign B_BL_CW = { 3'b000, 3'b000, 1'b1, 2'b11, 2'b11,  }
+				   //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size, MW,   RW,   DA,       SA,   SB 
+	assign B_BL_CW = { 3'b100, 3'b000, 1'b1, 2'b11, 2'b11, 1'b1,  1'bx, 1'b0, 1'b0, 5'bx, 1'bx, 2'bx, 1'b0, I[31], 5'b11110, 5'bx, 5'bx };
 
 	// CBZ & CBNZ
 	wire [1:0] CB_PS; // PS bits
@@ -143,18 +143,28 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 						// CGS,   NS,   SL,   IL,   DS,    AS,   PCsel, Bsel, mem_write, size,  RegWrite, PS,    FS,   SB,   SA,   DA
 	//assign CBZ_CBNZ_CW = {3'd5, 3'b0, 1'b0, 1'b0, 2'bxx, 1'bx, 1'b1,  1'bz, 1'b0,      2'bxx, 1'b0,     CB_PS, 5'bx, 5'bx, 5'bx, 5'bx}
 
-	 				  //  CGS,  NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size,  MW,   RW,   DA,   SA,   SB 
-	assign CBZ_CBNZ_CW = {3'd5, 3'b0, 1'bx, 2'bxx, CB_PS, 1'b1,  1'bz, 1'b0, 1'b0, 5'bx, 1'bx, 2'bxx, 1'b0, 1'b0, 5'bx, 5'bx, 5'bx};
+	 				   //  CGS,  NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size,  MW,   RW,   DA,   SA,   SB 
+	assign CBZ_CBNZ_CW = { 3'd5, 3'b0, 1'bx, 2'bxx, CB_PS, 1'b1,  1'bz, 1'b0, 1'b0, 5'bx, 1'bx, 2'bxx, 1'b0, 1'b0, 5'bx, 5'bx, 5'bx };
 	
 	// B.cond
 	
 		 			 //  CGS,    NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size,  MW,   RW,   DA,   SA,   SB 
-	assign B_cond_CW = { 3'b100, 3'b0,  }
+	assign B_cond_CW = { 3'b100, 3'b0,  };
+
+	// BR
+			 	 //  CGS,  NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size, MW,   RW,   DA,   SA,     SB 
+	assign BR_CW = { 3'b0, 3'b0, 1'bx, 2'bxx, 2'b11, 1'b0,  1'bx, 1'b0, 1'b0, 5'bx, 1'bx, 2'bx, 1'b0, 1'b0, 5'bx, I[9:5], 5'bx }
+
 	////////////////////////// Memory //////////////////////////
 	// Row 4 of TODO
+	// LDUR / STUR
+				 	    //  CGS,  NS,   AS,     DS,            PS,   PCsel, Bsel, IL,   SL,   FS,   C0,   size,     MW,     RW,    DA,     SA,     SB 
+	assign LDUR_STUR_CW = { 3'b0, 3'b0, 1'b0, { I[22], 1'b1 }, 2'bx, 1'bx,  1'bx, 1'b0, 1'b0, 5'bx, 1'bx, I[31:30], ~I[22], I[22], I[4:0], I[9:5], 5'bx };
 
 	///////////////////////// Data Reg. /////////////////////////
 	// Row 5 of TODO
+	// Logical Register
+	assign LogicReg_CW = 
 
 	//////////////////////////////////////////////////////////////
 
