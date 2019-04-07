@@ -9,7 +9,7 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 
 	wire [FULL_CW_LEN-1:0] full_control_word;
 
-	assign control_word = full_control_word[33:0]
+	assign control_word = full_control_word[33:0];
 
 	wire [2:0] CGS;
 	assign CGS = full_control_word [FULL_CW_LEN-1:37];
@@ -50,7 +50,7 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 	wire [FULL_CW_LEN-1:0] ArithImm_CW, LogicImm_CW, MOV_CW, BitField_CW, EXTR_CW;
 	Mux8to1Nbit data_imm_mux (
 		.F(DataImm_CW),
-		.S(instruction[25:23])
+		.S(instruction[25:23]),
 		.I0(64'b0), // not used
 		.I1(64'b0), // not used
 		.I2(ArithImm_CW),
@@ -79,11 +79,11 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 	wire [5:0] mem_encoder_in;
 	wire [FULL_CW_LEN-1:0] LDUR_STUR_CW, MemOther_CW;
 
-	assign mem_encoder_in = {instruction[29:28], instruction[24], instruction[21], instruction[11:10]}
+	assign mem_encoder_in = {instruction[29:28], instruction[24], instruction[21], instruction[11:10]};
 
 	encoder_mem e3_inst (mem_mux_sel, mem_encoder_in); // need to implement
 
-	assign Mem_CW = mem_mux_sel ? MemOther_CW, LDUR_STUR_CW;
+	assign Mem_CW = mem_mux_sel ? MemOther_CW : LDUR_STUR_CW;
 
 	wire [FULL_CW_LEN-1:0] LogicReg_CW, ArithReg_CW, AllKindsOfCrazyStuff_CW, MUL_CW;
 	Mux4to1Nbit data_reg_mux (
@@ -180,7 +180,7 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 	// BR
 			 	 //  CGS,  NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size, MW,   RW,   DA,   SA,     SB 
 	// Ready for testing
-	assign BR_CW = { 3'b0, 3'b0, 1'bx, 2'bxx, 2'b10, 1'b0,  1'bx, 1'b0, 1'b0, 5'bx, 1'bx, 2'bx, 1'b0, 1'b0, 5'bx, I[9:5], 5'bx }
+	assign BR_CW = { 3'b0, 3'b0, 1'bx, 2'bxx, 2'b10, 1'b0,  1'bx, 1'b0, 1'b0, 5'bx, 1'bx, 2'bx, 1'b0, 1'b0, 5'bx, I[9:5], 5'bx };
 
 	////////////////////////// Memory //////////////////////////
 	// LDUR / STUR
@@ -207,14 +207,14 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 
 endmodule
 
-module ConstantGenerator(constant, select, instruction);
+module ConstantGenerator(constant, select, I);
 	output [63:0] constant;
   	input [2:0] select;
-  	input [31:0] instruction;
+  	input [31:0] I;
 
 	Mux8to1Nbit constant_mux (
-  		.F(constant);
-  		.S(select);
+  		.F(constant),
+  		.S(select),
   		.I0({52'b0, I[21:10]}),     	// zf I[21:10]
   		.I1({52'b0, I[21:10]}),     	// Technically wrong
   		.I2({48'b0, I[20:5]}), 			// zf I[20:5]
@@ -261,20 +261,20 @@ module B_Cond_Case (encoding, status, result);
 	end
 endmodule
 
-module encoder_ex0(select, I28_27_26_25);
-	output [1:0] select;
+module encoder_ex0(S, I28_27_26_25);
+	output [1:0] S;
 	input [3:0] I28_27_26_25;
 
 	wire I28, I27, I26, I25;
-	assign {I28 ,I27, I26, I25} = I28_25;
+	assign {I28 ,I27, I26, I25} = I28_27_26_25;
 
 	// equations derived in class from page 232 of datasheet
 	assign S[0] = ~I27 & I26 | I27 & I25;
 	assign S[1] = I27;
 endmodule
 
-module encoder_branch(select, I30_25);
-	output [1:0] select;
+module encoder_branch(S, I30_25);
+	output [1:0] S;
 	input [5:0] I30_25;
 
 	// map the instruction bits to single wires for readability
@@ -290,12 +290,12 @@ module encoder_branch(select, I30_25);
 	assign S[1] = I30 & ~I29;
 endmodule
 
-module encoder_mem (select, I29_10);
+module encoder_mem (select, I29_28_24_21_11_10);
 	output select;
 	input [5:0] I29_28_24_21_11_10;
 
 	wire I29, I28, I24, I21, I11, I10;
-	assign (I29, I28, I24, I21, I11, I10) = I29_28_24_21_11_10;
+	assign {I29, I28, I24, I21, I11, I10} = I29_28_24_21_11_10;
 
 	assign select = I29 & I28 & ~I24 & ~I21 & ~I11 & ~I10;
 endmodule
