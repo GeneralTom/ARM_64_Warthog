@@ -1,10 +1,11 @@
 module LEGv8_ControlUnit_RM_testbench ();
 	wire [39:0] ControlWord;
+	wire [63:0] constant;
 	reg [31:0] instruction;
 	reg [4:0] status;
 	reg reset, clock;
-
-	ControlUnit_LEGv8 dut (ControlWord, instruction, status, reset, clock);
+						// control_word, constant, I, status, clock, reset
+	ControlUnit_LEGv8 dut (ControlWord, constant, instruction, status, reset, clock);
 
 	initial begin
 		instruction <= 32'b0;

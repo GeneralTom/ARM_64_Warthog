@@ -1,10 +1,10 @@
-module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, reset);
+module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 	parameter FULL_CW_LEN = 40;
 	output [33:0] control_word; // not using our cw
 	output [63:0] constant;
 
 	input clock, reset;
-	input [31:0] instruction;
+	input [31:0] I;
 	input [4:0] status;
 
 	wire [FULL_CW_LEN-1:0] full_control_word;
@@ -14,10 +14,11 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 	wire [2:0] CGS;
 	assign CGS = full_control_word [FULL_CW_LEN-1:37];
 
-	ConstantGenerator CG_inst (constant, CGS, instruction);
+	ConstantGenerator CG_inst (constant, CGS, I);
 
 	wire [2:0] NS;
-	wire [1:0] state;
+	wire [2:0] state;
+	assign state [2] = 1'b0;
 	assign NS = full_control_word [36:34];
 	RegisterNbit state_reg (state, NS, 1'b1, reset, clock);
 	defparam state_reg.N = 3;
@@ -36,7 +37,7 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 
 	wire [1:0] ex0_mux_select;
 	wire [FULL_CW_LEN-1:0] DataImm_CW, Branch_CW, Mem_CW, DataReg_CW;
-	encoder_ex0 e1_inst (ex0_mux_select, instruction[28:25]);
+	encoder_ex0 e1_inst (ex0_mux_select, I[28:25]);
 	Mux4to1Nbit ex0_mux (
 		.F(EX0_CW),
 		.S(ex0_mux_select),
@@ -50,7 +51,7 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 	wire [FULL_CW_LEN-1:0] ArithImm_CW, LogicImm_CW, MOV_CW, BitField_CW, EXTR_CW;
 	Mux8to1Nbit data_imm_mux (
 		.F(DataImm_CW),
-		.S(instruction[25:23]),
+		.S(I[25:23]),
 		.I0(64'b0), // not used
 		.I1(64'b0), // not used
 		.I2(ArithImm_CW),
@@ -64,7 +65,7 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 
 	wire [1:0] branch_mux_sel;
 	wire [FULL_CW_LEN-1:0] B_BL_CW, CBZ_CBNZ_CW, B_cond_CW, BR_CW;
-	encoder_branch e2_inst (branch_mux_sel, {instruction[30:29], instruction[25]});
+	encoder_branch e2_inst (branch_mux_sel, {I[30:29], I[25]});
 	Mux4to1Nbit branch_mux (
 		.F(Branch_CW),
 		.S(branch_mux_sel),
@@ -79,7 +80,7 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 	wire [5:0] mem_encoder_in;
 	wire [FULL_CW_LEN-1:0] LDUR_STUR_CW, MemOther_CW;
 
-	assign mem_encoder_in = {instruction[29:28], instruction[24], instruction[21], instruction[11:10]};
+	assign mem_encoder_in = {I[29:28], I[24], I[21], I[11:10]};
 
 	encoder_mem e3_inst (mem_mux_sel, mem_encoder_in); // need to implement
 
@@ -88,7 +89,7 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 	wire [FULL_CW_LEN-1:0] LogicReg_CW, ArithReg_CW, AllKindsOfCrazyStuff_CW, MUL_CW;
 	Mux4to1Nbit data_reg_mux (
 		.F(DataReg_CW),
-		.S(instruction[28:24]),
+		.S(I[28:24]),
 		.I0(LogicReg_CW),
 		.I1(ArithReg_CW),
 		.I2(AllKindsOfCrazyStuff_CW), // optional
@@ -132,11 +133,13 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 		.I2(2'b11),
 		.I3(2'b00)
 	);
+	defparam Logic_mux.N = 2;
+
 	wire ANDS_Set_Flags;
-	assign ANDS_Set_Flags = (I[30] & I[29]) & (LogicImm_FS_bits === 2'b00);
+	assign ANDS_Set_Flags = (I[30] & I[29]) & (Logic_FS_bits === 2'b00);
 					   //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,               FS,                              C0,     size,          MW,   RW,   DA,     SA,     SB 
 	// Ready for testing
-	assign LogicImm_CW = { 3'b000, 3'b000, 1'bx, 2'b00, 2'b00, 1'bx,  1'b1, 1'b0, ANDS_Set_Flags, { 1'b0, LogicImm_FS_bits, 2'b00 }, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[9:5], 5'bx };
+	assign LogicImm_CW = { 3'b000, 3'b000, 1'bx, 2'b00, 2'b00, 1'bx,  1'b1, 1'b0, ANDS_Set_Flags, { 1'b0, Logic_FS_bits, 2'b00 }, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[9:5], 5'bx };
 
 	// MOVZ / MOVK
 	wire [4:0] MOV_REG_Val;
@@ -157,7 +160,7 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 	assign CB_PS[1] = CB_PS[0];
 
 	// I24 is 0 for CBZ and 1 for CBNZ
-	assign CB_PS[0] = instruction[24] ^ status[0]; // zero status bit
+	assign CB_PS[0] = I[24] ^ status[0]; // zero status bit
 
 						// CGS,   NS,   SL,   IL,   DS,    AS,   PCsel, Bsel, mem_write, size,  RegWrite, PS,    FS,   SB,   SA,   DA
 	//assign CBZ_CBNZ_CW = {3'd5, 3'b0, 1'b0, 1'b0, 2'bxx, 1'bx, 1'b1,  1'bz, 1'b0,      2'bxx, 1'b0,     CB_PS, 5'bx, 5'bx, 5'bx, 5'bx}
@@ -168,8 +171,8 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 	
 	// B.cond
 	wire [1:0] B_cond_PS;
-	assign B_cond_PS = { B_cond_result, B_cond_result };
 	wire B_cond_result;
+	assign B_cond_PS = { B_cond_result, B_cond_result };
 						//   encoding, status, result
 	B_Cond_Case help_me_plz (I[4:0], status, B_cond_result);
 
@@ -192,7 +195,7 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 	// Logical Register
 				 	   //  CGS,  NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,               FS,                              C0,      size,          MW,   RW,   DA,     SA,     SB 
 	// Ready for testing
-	assign LogicReg_CW = { 3'b0, 3'b0, 1'bx, 2'b00, 2'b00, 1'bx,  1'b0, 1'b0, ANDS_Set_Flags, { 1'b0, LogicImm_FS_bits, 2'b00 }, 1'b0 , { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[9:5], I[20:16] };
+	assign LogicReg_CW = { 3'b0, 3'b0, 1'bx, 2'b00, 2'b00, 1'bx,  1'b0, 1'b0, ANDS_Set_Flags, { 1'b0, Logic_FS_bits, 2'b00 }, 1'b0 , { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[9:5], I[20:16] };
 
 	// Arithmetic Register
 				 	   //  CGS,  NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,      FS,               C0,      size,          MW,   RW,   DA,     SA,     SB 
@@ -237,7 +240,7 @@ module B_Cond_Case (encoding, status, result);
   */
 	input [4:0] encoding;
 	input [4:0] status;
-	output result;
+	output reg result;
 
 	always @ (encoding or status) begin
 		case (encoding)
@@ -257,6 +260,7 @@ module B_Cond_Case (encoding, status, result);
 			5'b01101: result <= status[1] & (status[2] ^ status[4]);
 			5'b01110: result <= 1'b1;
 			5'b01111: result <= 1'b0;
+			default: result = 1'b0;
 		endcase
 	end
 endmodule
