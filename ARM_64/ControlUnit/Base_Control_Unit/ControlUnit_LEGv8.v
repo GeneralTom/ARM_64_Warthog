@@ -168,8 +168,14 @@ module ControlUnit_LEGv8(control_word, constant, instruction, status, clock, res
 	
 	// B.cond
 	wire [1:0] B_cond_PS;
-		 			 //  CGS,    NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size,  MW,   RW,   DA,   SA,   SB 
-	assign B_cond_CW = { 3'b101, 3'b0, 1'bx, 2'bxx,  };
+	assign B_cond_PS = { B_cond_result, B_cond_result };
+	wire B_cond_result;
+						//   encoding, status, result
+	B_Cond_Case help_me_plz (I[4:0], status, B_cond_result);
+
+		 			 //  CGS,    NS,   AS,   DS,      PS,        PCsel, Bsel, IL,   SL,   FS,   C0,   size,  MW,   RW,   DA,   SA,   SB 
+	// Ready for testing
+	assign B_cond_CW = { 3'b101, 3'b0, 1'bx, 2'bxx, B_cond_PS, 1'b1,  1'bz, 1'b0, 1'b1, 5'bx, 1'bx, 2'bxx, 1'b0, 1'b0, 5'bx, 5'bx, 5'bx };
 
 	// BR
 			 	 //  CGS,  NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size, MW,   RW,   DA,   SA,     SB 
@@ -219,6 +225,40 @@ module ConstantGenerator(constant, select, instruction);
   		.I7({57'b0, I[15:10]})			// Not used (I'm going to use for shift)
   	);
 	defparam constant_mux.N = 64;
+endmodule
+
+module B_Cond_Case (encoding, status, result);
+ /**
+  * 4: V - Overflow detection 1 (yes) / 0 (no)
+  * 3: C - carry bit
+  * 2: N - Sign bit
+  * 1: Z - 1 (ALU output is zero) / 0 (ALU output isn't zero)
+  * 0: Z raw - 1 (ALU output is zero) / 0 (ALU output isn't zero)
+  */
+	input [4:0] encoding;
+	input [4:0] status;
+	output result;
+
+	always @ (encoding or status) begin
+		case (encoding)
+			5'b00000: result <= status[1];
+			5'b00001: result <= ~status[1];
+			5'b00010: result <= status[3];
+			5'b00011: result <= ~status[3];
+			5'b00100: result <= status[2];
+			5'b00101: result <= ~status[2];
+			5'b00110: result <= status[4];
+			5'b00111: result <= ~status[4];
+			5'b01000: result <= status[3] & ~status[1];
+			5'b01001: result <= ~status[3] | status[1];
+			5'b01010: result <= ~(status[2] ^ status[4]);
+			5'b01011: result <= status[2] ^ status[4];
+			5'b01100: result <= ~status[1] & ~(status[2] ^ status[4]);
+			5'b01101: result <= status[1] & (status[2] ^ status[4]);
+			5'b01110: result <= 1'b1;
+			5'b01111: result <= 1'b0;
+		endcase
+	end
 endmodule
 
 module encoder_ex0(select, I28_27_26_25);
