@@ -69,7 +69,7 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 
 	wire [1:0] branch_mux_sel;
 	wire [FULL_CW_LEN-1:0] B_BL_CW, CBZ_CBNZ_CW, B_cond_CW, BR_CW;
-	encoder_branch e2_inst (branch_mux_sel, {I[30:29], I[25]});
+	encoder_branch e2_inst (branch_mux_sel, I[30:25]);
 	Mux4to1Nbit branch_mux (
 		.F(Branch_CW),
 		.S(branch_mux_sel),
@@ -88,12 +88,12 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 
 	encoder_mem e3_inst (mem_mux_sel, mem_encoder_in); // need to implement
 
-	assign Mem_CW = mem_mux_sel ? MemOther_CW : LDUR_STUR_CW;
+	assign Mem_CW = mem_mux_sel ? LDUR_STUR_CW : MemOther_CW;
 
 	wire [FULL_CW_LEN-1:0] LogicReg_CW, ArithReg_CW, AllKindsOfCrazyStuff_CW, MUL_CW;
 	Mux4to1Nbit data_reg_mux (
 		.F(DataReg_CW),
-		.S(I[28:24]),
+		.S({I[28], I[24]}),
 		.I0(LogicReg_CW),
 		.I1(ArithReg_CW),
 		.I2(AllKindsOfCrazyStuff_CW), // optional
@@ -111,20 +111,20 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 
 	////////////////////////// Main MUX //////////////////////////
 	// Instruction Fetch
-				//  CGS,    NS,     AS,   DS,    PS,     PCsel, Bsel, IL,   SL,   FS,   C0,   size,  MW,   RW,   DA,   SA,   SB
-	
-	assign IF_CW = { 3'bxxx, 3'b001, 1'b1, 2'b11, 2'b01,  1'bx,  1'bx, 1'b1, 1'b0, 5'bx, 1'bx, 2'b11, 1'b0, 1'b0, 5'bx, 5'bx, 5'bx };
+				 //  CGS,  NS,     AS,   DS,    PS,     PCsel, Bsel, IL,   SL,   FS,   C0,   size,  MW,   RW,   DA,   SA,   SB
+				 //	  x                                   x      x                 x    x                         x     x     x
+	assign IF_CW = { 3'b0, 3'b001, 1'b1, 2'b11, 2'b01,  1'b0,  1'b0, 1'b1, 1'b0, 5'b0, 1'b0, 2'b11, 1'b0, 1'b0, 5'b0, 5'b0, 5'b0 };
 
 	// EX1_CW
 				  //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,     SB 
-	// Ready for testing
-	assign EX1_CW = { 3'b011, 3'b001, 1'bx, 2'b00, 2'b00, 1'bx,  1'b1, 1'b0, 1'b0, 5'b00000, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[4:0], 5'bx };
+				  //                    x                   x                                                                                     x
+	assign EX1_CW = { 3'b011, 3'b000, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b00000, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[4:0], 5'b0 };
 
 	///////////////////////// Data Imm. /////////////////////////
 	// Arithmetic Immediate Operators (ADDI, SUBI)
 					   //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,      FS,               C0,      size,          MW,   RW,   DA,     SA,     SB 
-	// Ready for testing
-	assign ArithImm_CW = { 3'b000, 3'b000, 1'bx, 2'b00, 2'b00, 1'bx,  1'b1, 1'b0, I[29], { 4'b0100, I[30] }, I[30], { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[9:5], 5'bx };
+					   //                    x                  x                                                                                                  x
+	assign ArithImm_CW = { 3'b000, 3'b000, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, I[29], { 4'b0100, I[30] }, I[30], { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[9:5], 5'b0 };
 
 	// Logical Immediate Operators (AND, OR, XOR)
 
@@ -142,22 +142,22 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 	wire ANDS_Set_Flags;
 	assign ANDS_Set_Flags = (I[30] & I[29]) & (Logic_FS_bits === 2'b00);
 					   //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,               FS,                              C0,     size,          MW,   RW,   DA,     SA,     SB 
-	// Ready for testing
-	assign LogicImm_CW = { 3'b000, 3'b000, 1'bx, 2'b00, 2'b00, 1'bx,  1'b1, 1'b0, ANDS_Set_Flags, { 1'b0, Logic_FS_bits, 2'b00 }, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[9:5], 5'bx };
+					   //                    x                   x                                                                                                                     x
+	assign LogicImm_CW = { 3'b000, 3'b000, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, ANDS_Set_Flags, { 1'b0, Logic_FS_bits, 2'b00 }, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[9:5], 5'b0 };
 
 	// MOVZ / MOVK
 	wire [4:0] MOV_REG_Val;
 	assign MOV_REG_Val = I[29] ? I[4:0] : 5'b11111;
 	
 				  //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,          SB 
-	// Ready for testing
-	assign MOV_CW = { 3'b010, 3'b000, 1'bx, 2'b00, 2'b00, 1'bx,  1'b1, 1'b0, 1'b0, 5'b00100, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], MOV_REG_Val, 5'bx };
+				  //                    x                  x                                                                                           x
+	assign MOV_CW = { 3'b010, 3'b010, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b00100, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], MOV_REG_Val, 5'b0 };
 	
 	////////////////////////// Branch //////////////////////////
 	// B / BL
 				   //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size, MW,   RW,    DA,       SA,   SB 
-	// Ready for testing
-	assign B_BL_CW = { 3'b100, 3'b000, 1'bx, 2'b10, 2'b11, 1'b1,  1'bx, 1'b0, 1'b0, 5'bx, 1'bx, 2'bx, 1'b0, I[31], 5'b11110, 5'bx, 5'bx };
+				   //                   x                           x                 x     x     x                            x     x
+	assign B_BL_CW = { 3'b100, 3'b000, 1'b0, 2'b10, 2'b11, 1'b1,  1'b0, 1'b0, 1'b0, 5'b0, 1'b0, 2'b0, 1'b0, I[31], 5'b11110, 5'b0, 5'b0 };
 
 	// CBZ & CBNZ
 	wire [1:0] CB_PS; // PS bits
@@ -170,8 +170,8 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 	//assign CBZ_CBNZ_CW = {3'd5, 3'b0, 1'b0, 1'b0, 2'bxx, 1'bx, 1'b1,  1'bz, 1'b0,      2'bxx, 1'b0,     CB_PS, 5'bx, 5'bx, 5'bx, 5'bx}
 
 	 				   //  CGS,  NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size,  MW,   RW,   DA,   SA,   SB 
-	// Ready for testing
-	assign CBZ_CBNZ_CW = { 3'd5, 3'b0, 1'bx, 2'bxx, CB_PS, 1'b1,  1'bz, 1'b0, 1'b0, 5'bx, 1'bx, 2'bxx, 1'b0, 1'b0, 5'bx, 5'bx, 5'bx };
+					   //                  x      x                   z                 x     x     x                  x     x     x
+	assign CBZ_CBNZ_CW = { 3'b101, 3'b0, 1'b0, 2'b00, CB_PS, 1'b1,  1'b0, 1'b0, 1'b0, 5'b0, 1'b0, 2'b00, 1'b0, 1'b0, 5'b0, 5'b0, 5'b0 };
 	
 	// B.cond
 	wire [1:0] B_cond_PS;
@@ -181,30 +181,30 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 	B_Cond_Case help_me_plz (I[4:0], status, B_cond_result);
 
 		 			 //  CGS,    NS,   AS,   DS,      PS,        PCsel, Bsel, IL,   SL,   FS,   C0,   size,  MW,   RW,   DA,   SA,   SB 
-	// Ready for testing
-	assign B_cond_CW = { 3'b101, 3'b0, 1'bx, 2'bxx, B_cond_PS, 1'b1,  1'bz, 1'b0, 1'b1, 5'bx, 1'bx, 2'bxx, 1'b0, 1'b0, 5'bx, 5'bx, 5'bx };
+					 //                  x      x                       z                 x     x      x                 x     x     x
+	assign B_cond_CW = { 3'b101, 3'b0, 1'b0, 2'b00, B_cond_PS, 1'b1,  1'b0, 1'b0, 1'b1, 5'b0, 1'b0, 2'b00, 1'b0, 1'b0, 5'b0, 5'b0, 5'b0 };
 
 	// BR
 			 	 //  CGS,  NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size, MW,   RW,   DA,   SA,     SB 
-	// Ready for testing
-	assign BR_CW = { 3'b0, 3'b0, 1'bx, 2'bxx, 2'b10, 1'b0,  1'bx, 1'b0, 1'b0, 5'bx, 1'bx, 2'bx, 1'b0, 1'b0, 5'bx, I[9:5], 5'bx };
+				 //                x     x                    x                 x    x     x                 x              x
+	assign BR_CW = { 3'b0, 3'b0, 1'b0, 2'b00, 2'b10, 1'b0,  1'b0, 1'b0, 1'b0, 5'b0, 1'b0, 2'b0, 1'b0, 1'b0, 5'b0, I[9:5], 5'b0 };
 
 	////////////////////////// Memory //////////////////////////
 	// LDUR / STUR
 				 	    //  CGS,    NS,   AS,     DS,            PS,    PCsel, Bsel, IL,   SL,   FS,       C0,   size,     MW,     RW,    DA,     SA,     SB 
-	// Ready for testing
-	assign LDUR_STUR_CW = { 3'b110, 3'b0, 1'b0, { I[22], 1'b1 }, 2'b00, 1'bx,  1'b1, 1'b0, 1'b0, 5'b01000, 1'b0, I[31:30], ~I[22], I[22], I[4:0], I[9:5], 5'bx };
+						//                                                x                                                                                 x
+	assign LDUR_STUR_CW = { 3'b110, 3'b0, 1'b0, { I[22], 1'b1 }, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b01000, 1'b0, I[31:30], ~I[22], I[22], I[4:0], I[9:5], 5'b0 };
 
 	///////////////////////// Data Reg. /////////////////////////
 	// Logical Register
 				 	   //  CGS,  NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,               FS,                              C0,      size,          MW,   RW,   DA,     SA,     SB 
-	// Ready for testing
-	assign LogicReg_CW = { 3'b0, 3'b0, 1'bx, 2'b00, 2'b00, 1'bx,  1'b0, 1'b0, ANDS_Set_Flags, { 1'b0, Logic_FS_bits, 2'b00 }, 1'b0 , { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[9:5], I[20:16] };
+					   //                x                   x
+	assign LogicReg_CW = { 3'b0, 3'b0, 1'b0, 2'b00, 2'b00, 1'b0,  1'b0, 1'b0, ANDS_Set_Flags, { 1'b0, Logic_FS_bits, 2'b00 }, 1'b0 , { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[9:5], I[20:16] };
 
 	// Arithmetic Register
 				 	   //  CGS,  NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,      FS,               C0,      size,          MW,   RW,   DA,     SA,     SB 
-	// Ready for testing
-	assign ArithReg_CW = { 3'b0, 3'b0, 1'bx, 2'b00, 2'b00, 1'bx,  1'b0, 1'b0, I[29], { 4'b0100, I[30] }, I[30], { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[9:5], I[20:16] };
+					   //                x                   x
+	assign ArithReg_CW = { 3'b0, 3'b0, 1'b0, 2'b00, 2'b00, 1'b0,  1'b0, 1'b0, I[29], { 4'b0100, I[30] }, I[30], { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[9:5], I[20:16] };
 
 	//////////////////////////////////////////////////////////////
 
@@ -229,7 +229,7 @@ module ConstantGenerator(constant, select, I);
   		.I4({{38{I[25]}}, I[25:0]}),	// se I[25:0]
   		.I5({{45{I[23]}}, I[23:5]}),	// se I[23:5]
   		.I6({{55{I[20]}}, I[20:12]}),	// se I[20:12]
-  		.I7({57'b0, I[15:10]})			// Not used (I'm going to use for shift)
+  		.I7({58'b0, I[15:10]})			// Not used (I'm going to use for shift)
   	);
 	defparam constant_mux.N = 64;
 endmodule
@@ -274,7 +274,7 @@ module encoder_ex0(S, I28_27_26_25);
 	input [3:0] I28_27_26_25;
 
 	wire I28, I27, I26, I25;
-	assign {I28 ,I27, I26, I25} = I28_27_26_25;
+	assign {I28, I27, I26, I25} = I28_27_26_25;
 
 	// equations derived in class from page 232 of datasheet
 	assign S[0] = ~I27 & I26 | I27 & I25;
