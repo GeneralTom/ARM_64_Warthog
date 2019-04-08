@@ -18,20 +18,24 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 
 	wire [2:0] NS;
 	wire [2:0] state;
-	assign state [2] = 1'b0;
+	// assign state [2] = 1'b0;
 	assign NS = full_control_word [36:34];
 	RegisterNbit state_reg (state, NS, 1'b1, reset, clock);
 	defparam state_reg.N = 3;
 
 	// create al intermediate control words
 	wire [FULL_CW_LEN-1:0] IF_CW, EX0_CW, EX1_CW, EX2_CW;
-	Mux4to1Nbit state_mux (
+	Mux8to1Nbit state_mux (
 		.F(full_control_word),
 		.S(state),
 		.I0(IF_CW),
 		.I1(EX0_CW),
 		.I2(EX1_CW),
-		.I3(EX2_CW)
+		.I3(EX2_CW),
+		.I4(40'b0),
+		.I5(40'b0),
+		.I6(40'b0),
+		.I7(40'b0)
 	);
 	defparam state_mux.N = FULL_CW_LEN;
 
@@ -290,8 +294,10 @@ module encoder_branch(S, I30_25);
 
 	// assign (I30, I29, I25) = I30_29_25
 
-	assign S[0] = (I30 & ~I29 & I25) | (~I30 & I29 & ~I25);
-	assign S[1] = I30 & ~I29;
+	// assign S[0] = (I30 & ~I29 & I25) | (~I30 & I29 & ~I25);
+	// assign S[1] = I30 & ~I29;
+	assign S[0] = I29 | (I30 & I25);
+	assign S[1] = (~I30 & ~I29 & ~I25) | (I30 & I25);
 endmodule
 
 module encoder_mem (select, I29_28_24_21_11_10);
