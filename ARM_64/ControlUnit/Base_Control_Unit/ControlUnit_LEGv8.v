@@ -52,10 +52,10 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 	Mux8to1Nbit data_imm_mux (
 		.F(DataImm_CW),
 		.S(I[25:23]),
-		.I0(64'b0), // not used
-		.I1(64'b0), // not used
+		.I0(40'b0), // not used
+		.I1(40'b0), // not used
 		.I2(ArithImm_CW),
-		.I3(64'b0),
+		.I3(40'b0),
 		.I4(LogicImm_CW),
 		.I5(MOV_CW),
 		.I6(BitField_CW), // optional

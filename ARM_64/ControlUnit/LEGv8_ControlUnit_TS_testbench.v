@@ -1,5 +1,5 @@
 module LEGv8_ControlUnit_TS_testbench ();
-	wire [39:0] ControlWord;
+	wire [33:0] ControlWord;
 	wire [63:0] constant;
 	reg [31:0] instruction;
 	reg [4:0] status;
