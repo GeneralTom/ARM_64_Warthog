@@ -1,4 +1,4 @@
-module DE0_DatapathTest(CLOCK_50, LEDG, SW, BUTTON, GPIO0_D, GPIO1_D, HEX0, HEX1, HEX2, HEX3);
+module DE0_DatapathTest_JD(CLOCK_50, LEDG, SW, BUTTON, GPIO0_D, GPIO1_D, HEX0, HEX1, HEX2, HEX3);
 	// connection names for DE0 FPGA board - names must match pin assignment file
 	input CLOCK_50;
 	input [9:0] SW;
@@ -85,10 +85,10 @@ module DE0_DatapathTest(CLOCK_50, LEDG, SW, BUTTON, GPIO0_D, GPIO1_D, HEX0, HEX1
 	// if there are more than 32-bits to the control word connect them to SW[9:0]
 	// in my case there was only one more bit so it is connected to SW[0]
 	// if your control word is 32-bits or less remove the following line
-	
+	// assign ControlWord[39:32] = SW[7:0];
 	// make the constant constant
 	// alternatively some of the constant bits could be connected to switches (SW) to allow it to be changed
-	assign constant = 64'd24;
+	assign constant = 64'h8000000A;
 	// connect the status bits to the LEDs
 	assign LEDG[4:0] = status;
 
@@ -99,5 +99,5 @@ module DE0_DatapathTest(CLOCK_50, LEDG, SW, BUTTON, GPIO0_D, GPIO1_D, HEX0, HEX1
 	/////////// connection order appropriate using the names from this file
 	// DatapathWithMem datapath (ControlWord, constant, status, instruction, data, address, mem_write, mem_read, size, clock, reset, PC_out, r0, r1, r2, r3, r4, r5, r6, r7);
 							// ControlWord, data, address, reset, clock, constant, status, IR_out, current_status, r0, r1, r2, r3, r4, r5, r6, r7);
-	LEGv8_Datapath_TS datapath (ControlWord, data, address, reset, clock, constant, status, instruction, current_status, r0, r1, r2, r3, r4, r5, r6, r7);
+	LEGv8_Datapath_JD datapath (ControlWord, data, address, reset, clock, constant, status, instruction, current_status, r0, r1, r2, r3, r4, r5, r6, r7);
 endmodule

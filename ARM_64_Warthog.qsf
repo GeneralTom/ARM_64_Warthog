@@ -38,7 +38,7 @@
 
 set_global_assignment -name FAMILY "Cyclone III"
 set_global_assignment -name DEVICE EP3C16F484C6
-set_global_assignment -name TOP_LEVEL_ENTITY DE0_DatapathTest
+set_global_assignment -name TOP_LEVEL_ENTITY ControlUnit_LEGv8
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION "13.0 SP1"
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "09:57:29  JANUARY 29, 2019"
 set_global_assignment -name LAST_QUARTUS_VERSION "13.0 SP1"
@@ -344,21 +344,13 @@ set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME LEGv8_ControlUnit_TS_test
 set_global_assignment -name EDA_TEST_BENCH_NAME LEGv8_Datapath_JD_testbench -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id LEGv8_Datapath_JD_testbench
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME LEGv8_Datapath_JD_testbench -section_id LEGv8_Datapath_JD_testbench
-set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/RegisterFile/RegisterFile32x64_Testbench.v -section_id RegisterFile32x64_Testbench
-set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/ALU/ALU_LEGv8_Testbench.v -section_id ALU_LEGv8_Testbench
-set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/memory/RAM/RAM_64bit_testbench.v -section_id RAM_64bit_testbench
-set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/memory/ROM/ROM_64bit_testbench.v -section_id ROM_64bit_testbench
-set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/Datapath/LEGv8_Datapath_TS_testbench.v -section_id LEGv8_Datapath_TS_testbench
-set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/Datapath/LEGv8_Datapath_RM_testbench.v -section_id LEGv8_Datapath_RM_testbench
-set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/ControlUnit/LEGv8_ControlUnit_TS_testbench.v -section_id LEGv8_ControlUnit_TS_testbench
-set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/Datapath/LEGv8_Datapath_JD_testbench.v -section_id LEGv8_Datapath_JD_testbench
+set_global_assignment -name VERILOG_FILE ARM_64/ControlUnit/LEGv8_ControlUnit_RM_testbench.v
 set_global_assignment -name VERILOG_FILE ARM_64/DE0/GPIO_Board.v
 set_global_assignment -name VERILOG_FILE ARM_64/DE0/DE0_DatapathTest.v
 set_global_assignment -name VERILOG_FILE ARM_64/DE0/quad_7seg_decoder.v
 set_global_assignment -name VERILOG_FILE ARM_64/Datapath/LEGv8_Datapath_JD_testbench.v
 set_global_assignment -name VERILOG_FILE ARM_64/Datapath/LEGv8_Datapath_JD.v
 set_global_assignment -name VERILOG_FILE ARM_64/ControlUnit/Base_Control_Unit/ControlUnit_LEGv8.v
-set_global_assignment -name VERILOG_FILE ARM_64/ControlUnit/StateRegister.v
 set_global_assignment -name VERILOG_FILE ARM_64/ControlUnit/LEGv8_ControlUnit_TS_testbench.v
 set_global_assignment -name VERILOG_FILE ARM_64/ControlUnit/LEGv8_ControlUnit_TS.v
 set_global_assignment -name VERILOG_FILE ARM_64/Datapath/LEGv8_Datapath_RM_testbench.v
@@ -383,7 +375,19 @@ set_global_assignment -name VERILOG_FILE ARM_64/misc/Carry_Lookahead_Adders.v
 set_global_assignment -name VERILOG_FILE ARM_64/RegisterFile/RegisterNbit.v
 set_global_assignment -name VERILOG_FILE ARM_64/RegisterFile/RegisterFile32x64_Testbench.v
 set_global_assignment -name VERILOG_FILE ARM_64/RegisterFile/RegisterFile32x64.v
+set_global_assignment -name EDA_TEST_BENCH_NAME LEGv8_ControlUnit_RM_testbench -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id LEGv8_ControlUnit_RM_testbench
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME LEGv8_ControlUnit_RM_testbench -section_id LEGv8_ControlUnit_RM_testbench
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/RegisterFile/RegisterFile32x64_Testbench.v -section_id RegisterFile32x64_Testbench
+set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/ALU/ALU_LEGv8_Testbench.v -section_id ALU_LEGv8_Testbench
+set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/memory/RAM/RAM_64bit_testbench.v -section_id RAM_64bit_testbench
+set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/memory/ROM/ROM_64bit_testbench.v -section_id ROM_64bit_testbench
+set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/Datapath/LEGv8_Datapath_TS_testbench.v -section_id LEGv8_Datapath_TS_testbench
+set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/Datapath/LEGv8_Datapath_RM_testbench.v -section_id LEGv8_Datapath_RM_testbench
+set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/ControlUnit/LEGv8_ControlUnit_TS_testbench.v -section_id LEGv8_ControlUnit_TS_testbench
+set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/Datapath/LEGv8_Datapath_JD_testbench.v -section_id LEGv8_Datapath_JD_testbench
+set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/ControlUnit/LEGv8_ControlUnit_RM_testbench.v -section_id LEGv8_ControlUnit_RM_testbench
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

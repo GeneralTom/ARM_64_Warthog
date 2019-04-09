@@ -1,7 +1,7 @@
 module Mux4to1Nbit(F, S, I0, I1, I2, I3);
 	parameter N = 64;
 	input [N-1:0]I0, I1, I2, I3;
-	input [2:0]S;
+	input [1:0]S;
 	output [N-1:0]F;
 	
 	assign F = S[1] ? (S[0] ? I3 : I2) : (S[0] ? I1 : I0);
