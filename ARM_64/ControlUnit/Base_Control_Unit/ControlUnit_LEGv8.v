@@ -294,10 +294,10 @@ module encoder_branch(S, I30_25);
 
 	// assign (I30, I29, I25) = I30_29_25
 
-	// assign S[0] = (I30 & ~I29 & I25) | (~I30 & I29 & ~I25);
-	// assign S[1] = I30 & ~I29;
-	assign S[0] = I29 | (I30 & I25);
-	assign S[1] = (~I30 & ~I29 & ~I25) | (I30 & I25);
+	assign S[0] = (I30 & ~I29 & I25) | (~I30 & I29 & ~I25);
+	assign S[1] = I30 & ~I29;
+	// assign S[0] = I29 | (I30 & I25);
+	// assign S[1] = (~I30 & ~I29 & ~I25) | (I30 & I25);
 endmodule
 
 module encoder_mem (select, I29_28_24_21_11_10);

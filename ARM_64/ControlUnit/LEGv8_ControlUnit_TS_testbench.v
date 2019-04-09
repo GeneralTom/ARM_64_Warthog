@@ -69,7 +69,7 @@ module LEGv8_ControlUnit_TS_testbench ();
 		// #20
 
 		//MOVK
-		instruction <= 32'b111100101_00_0000000000000000_00000;
+		instruction <= 32'b111100101_00_0000000000000000_00111;
 		#30
 //END DATA TRANSFER -------------------------------------------
 
@@ -109,7 +109,7 @@ module LEGv8_ControlUnit_TS_testbench ();
 		// //LSR
 		// instruction <= 32'b11010011010_00000_000000_00000_00000;
 		// #20
-		
+
 		// //LSL
 		// instruction <= 32'b11010011011_00000_000000_00000_00000;
 		// #20
@@ -124,8 +124,9 @@ module LEGv8_ControlUnit_TS_testbench ();
 		// instruction <= 32'b10110101_0000000000000000000_00000;
 		// #20
 
+		status <= 5'b00100;
 		//B.cond
-		instruction <= 32'b01010100_0000000000000000000_00000;
+		instruction <= 32'b01010100_0000000000000000000_00100;
 		#20
 //END CONDITIONAL BRANCH -------------------------------------
 
