@@ -1,10 +1,10 @@
-module CPU_LEGv8 (data, address, clock, reset, r0, r1, r2, r3, r4, r5, r6, r7);
+module CPU_LEGv8_TS (data, address, instruction, clock, reset, r0, r1, r2, r3, r4, r5, r6, r7);
     inout [63:0] data;
-    output tri [31:0] address;
+    output [31:0] address;
     input clock, reset;
 
     wire [33:0] control_word;
-    wire [31:0] instruction;
+    output [31:0] instruction;
     wire [63:0] constant;
     wire [4:0] status;
     wire [3:0] current_status;

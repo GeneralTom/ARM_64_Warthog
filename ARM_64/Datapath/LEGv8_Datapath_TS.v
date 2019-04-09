@@ -65,11 +65,11 @@ module LEGv8_Datapath_TS(ControlWord, data, address, reset, clock, constant, sta
 	Datapath_LEGv8 base_datapath (data, address, reset, clock, constant, DA, SA, SB, RW, current_status, FS, C0, IR_out, IL, SR_out, SL, PS, PCsel, Bsel, data_signals[0], data_signals[1], data_signals[2], addr_signals[0], addr_signals[1], r0, r1, r2, r3, r4, r5, r6, r7);
 	defparam base_datapath.PC_RESET_VALUE = 32'h20000000;
 
-	RAM_Detect ram (data, address, MW, data_signals[3], size, clock);
+	RAM_Detect ram (data, address, MW, data_signals[3], size, ~clock);
 	defparam ram.BASE_ADDR = 32'h00000000;
 	defparam ram.ADDR_WIDTH = 10;
 
-	ROM_Detect rom (data, address, data_signals[3], size, clock);
+	ROM_Detect rom (data, address, data_signals[3], size, ~clock);
 	defparam rom.BASE_ADDR = 32'h20000000;
 	defparam rom.ADDR_WIDTH = 8;
 endmodule
