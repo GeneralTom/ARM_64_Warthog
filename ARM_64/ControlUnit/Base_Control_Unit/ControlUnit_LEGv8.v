@@ -118,7 +118,7 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 	// EX1_CW
 				  //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,     SB 
 				  //                    x                   x                                                                                     x
-	assign EX1_CW = { 3'b011, 3'b000, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b00000, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[4:0], 5'b0 };
+	assign EX1_CW = { 3'b010, 3'b000, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b00100, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[4:0], 5'b0 };
 
 	///////////////////////// Data Imm. /////////////////////////
 	// Arithmetic Immediate Operators (ADDI, SUBI)
@@ -149,9 +149,9 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 	wire [4:0] MOV_REG_Val;
 	assign MOV_REG_Val = I[29] ? I[4:0] : 5'b11111;
 	
-				  //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,          SB 
-				  //                    x                  x                                                                                           x
-	assign MOV_CW = { 3'b010, 3'b010, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b00100, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], MOV_REG_Val, 5'b0 };
+				  //  CGS,              NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,                        C0,     size,          MW,   RW,   DA,     SA,          SB 
+				  //                              x                  x                                                                                                            x
+	assign MOV_CW = { { 2'b01, I[29] }, { 1'b0, I[29], 1'b0 }, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, { 2'b00, ~I[29] , 2'b00 }, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], MOV_REG_Val, 5'b0 };
 	
 	////////////////////////// Branch //////////////////////////
 	// B / BL
