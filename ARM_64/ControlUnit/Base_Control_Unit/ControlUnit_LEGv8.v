@@ -164,14 +164,14 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 	assign CB_PS[1] = CB_PS[0];
 
 	// I24 is 0 for CBZ and 1 for CBNZ
-	assign CB_PS[0] = I[24] ^ status[1]; // zero status bit
+	assign CB_PS[0] = I[24] ^ status[0]; // zero status bit
 
 						// CGS,   NS,   SL,   IL,   DS,    AS,   PCsel, Bsel, mem_write, size,  RegWrite, PS,    FS,   SB,   SA,   DA
 	//assign CBZ_CBNZ_CW = {3'd5, 3'b0, 1'b0, 1'b0, 2'bxx, 1'bx, 1'b1,  1'bz, 1'b0,      2'bxx, 1'b0,     CB_PS, 5'bx, 5'bx, 5'bx, 5'bx}
 
-	 				   //  CGS,  NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size,  MW,   RW,   DA,   SA,   SB 
-					   //                  x      x                   z                 x     x     x                  x     x     x
-	assign CBZ_CBNZ_CW = { 3'b101, 3'b0, 1'b0, 2'b00, CB_PS, 1'b1,  1'b0, 1'b0, 1'b0, 5'b0, 1'b0, 2'b00, 1'b0, 1'b0, 5'b0, 5'b0, 5'b0 };
+	 				   //  CGS,    NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,   size,  MW,   RW,   DA,   SA,   SB 
+					   //                  x      x                   z                 x         x     x                  x     x     x
+	assign CBZ_CBNZ_CW = { 3'b101, 3'b0, 1'b0, 2'b00, CB_PS, 1'b1,  1'b0, 1'b0, 1'b0, 5'b01000, 1'b0, 2'b11, 1'b0, 1'b0, 5'b0, 5'b11111, I[4:0] };
 	
 	// B.cond
 	wire [1:0] B_cond_PS;

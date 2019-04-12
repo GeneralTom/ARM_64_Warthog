@@ -386,6 +386,7 @@ set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME CPU_LEGv8_TS_testbench -s
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+
 set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/RegisterFile/RegisterFile32x64_Testbench.v -section_id RegisterFile32x64_Testbench
 set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/ALU/ALU_LEGv8_Testbench.v -section_id ALU_LEGv8_Testbench
 set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/memory/RAM/RAM_64bit_testbench.v -section_id RAM_64bit_testbench
@@ -396,5 +397,4 @@ set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/ControlUnit/LEGv8_Control
 set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/Datapath/LEGv8_Datapath_JD_testbench.v -section_id LEGv8_Datapath_JD_testbench
 set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/ControlUnit/LEGv8_ControlUnit_RM_testbench.v -section_id LEGv8_ControlUnit_RM_testbench
 set_global_assignment -name EDA_TEST_BENCH_FILE ARM_64/CPU/CPU_LEGv8_TS_testbench.v -section_id CPU_LEGv8_TS_testbench
-
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
