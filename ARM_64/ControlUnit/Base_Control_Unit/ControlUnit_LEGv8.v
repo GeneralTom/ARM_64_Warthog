@@ -169,9 +169,9 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 						// CGS,   NS,   SL,   IL,   DS,    AS,   PCsel, Bsel, mem_write, size,  RegWrite, PS,    FS,   SB,   SA,   DA
 	//assign CBZ_CBNZ_CW = {3'd5, 3'b0, 1'b0, 1'b0, 2'bxx, 1'bx, 1'b1,  1'bz, 1'b0,      2'bxx, 1'b0,     CB_PS, 5'bx, 5'bx, 5'bx, 5'bx}
 
-	 				   //  CGS,  NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size,  MW,   RW,   DA,   SA,   SB 
-					   //                  x      x                   z                 x     x     x                  x     x     x
-	assign CBZ_CBNZ_CW = { 3'b101, 3'b0, 1'b0, 2'b00, CB_PS, 1'b1,  1'b0, 1'b0, 1'b0, 5'b0, 1'b0, 2'b00, 1'b0, 1'b0, 5'b0, 5'b0, 5'b0 };
+	 				   //  CGS,    NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,   size,  MW,   RW,   DA,   SA,   SB 
+					   //                  x      x                   z                 x         x     x                  x     x     x
+	assign CBZ_CBNZ_CW = { 3'b101, 3'b0, 1'b0, 2'b00, CB_PS, 1'b1,  1'b0, 1'b0, 1'b0, 5'b01000, 1'b0, 2'b11, 1'b0, 1'b0, 5'b0, 5'b11111, I[4:0] };
 	
 	// B.cond
 	wire [1:0] B_cond_PS;
@@ -193,7 +193,7 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 	// LDUR / STUR
 				 	    //  CGS,    NS,   AS,     DS,            PS,    PCsel, Bsel, IL,   SL,   FS,       C0,   size,     MW,     RW,    DA,     SA,     SB 
 						//                                                x                                                                                 x
-	assign LDUR_STUR_CW = { 3'b110, 3'b0, 1'b0, { I[22], 1'b1 }, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b01000, 1'b0, I[31:30], ~I[22], I[22], I[4:0], I[9:5], 5'b0 };
+	assign LDUR_STUR_CW = { 3'b110, 3'b0, 1'b0, { I[22], 1'b1 }, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b01000, 1'b0, I[31:30], ~I[22], I[22], I[4:0], I[9:5], I[4:0] };
 
 	///////////////////////// Data Reg. /////////////////////////
 	// Logical Register

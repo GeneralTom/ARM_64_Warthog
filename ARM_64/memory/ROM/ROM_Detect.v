@@ -14,7 +14,7 @@ module ROM_Detect(data, address, mem_read, size, clock);
 	defparam detROM.base_address = BASE_ADDR;
 	defparam detROM.address_mask = 32'hFFFFFFFF << ADDR_WIDTH;
 
-	ROM_64bit ROM (data_rom, address, clock, size);
+	ROM_64bit ROM (data_rom, address[ADDR_WIDTH-1:0], clock, size);
 	defparam ROM.ADDR_WIDTH = ADDR_WIDTH;
 
 	// Add tristate buffer to allow for chip_select, since it is not built into ROM_64bit.v
