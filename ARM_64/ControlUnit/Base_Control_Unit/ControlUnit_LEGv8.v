@@ -62,7 +62,7 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 		.I3(40'b0),
 		.I4(LogicImm_CW),
 		.I5(MOV_CW),
-		.I6(BitField_CW), // optional
+		.I6(LogicImm_CW), // optional, originally BitField_CW
 		.I7(EXTR_CW) //optional
 	);
 	defparam data_imm_mux.N = FULL_CW_LEN;
@@ -129,21 +129,31 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 	// Logical Immediate Operators (AND, OR, XOR)
 
 	wire [1:0] Logic_FS_bits;
+	wire [1:0] XOR_or_shift;
+	
 	Mux4to1Nbit Logic_mux (
 		.F(Logic_FS_bits),
 		.S(I[30:29]),
 		.I0(2'b00),
 		.I1(2'b01),
-		.I2(2'b11),
+		.I2(XOR_or_shift),
 		.I3(2'b00)
 	);
 	defparam Logic_mux.N = 2;
+
+	mux2to1_Nbit XOR_shift (
+		.F(XOR_or_shift),
+		.S(I[22]),
+		.I0(2'b11),
+		.I1({ 1'b0, ~I[21] })
+	);
+	defparam XOR_shift.N = 2;
 
 	wire ANDS_Set_Flags;
 	assign ANDS_Set_Flags = (I[30] & I[29]) & (Logic_FS_bits === 2'b00);
 					   //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,               FS,                              C0,     size,          MW,   RW,   DA,     SA,     SB 
 					   //                    x                   x                                                                                                                     x
-	assign LogicImm_CW = { 3'b000, 3'b000, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, ANDS_Set_Flags, { 1'b0, Logic_FS_bits, 2'b00 }, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[9:5], 5'b0 };
+	assign LogicImm_CW = { { 3{I[22]} } , 3'b000, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, ANDS_Set_Flags, { I[22], Logic_FS_bits, 2'b00 }, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[9:5], 5'b0 };
 
 	// MOVZ / MOVK
 	wire [4:0] MOV_REG_Val;
