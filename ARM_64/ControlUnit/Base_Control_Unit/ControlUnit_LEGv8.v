@@ -107,7 +107,7 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 	assign EXTR_CW = 40'b0;
 	assign MemOther_CW = 40'b0;
 	assign AllKindsOfCrazyStuff_CW = 40'b0;
-	assign MUL_CW = 40'b0;
+	// assign MUL_CW = 40'b0;
 
 	////////////////////////// Main MUX //////////////////////////
 	// Instruction Fetch
@@ -116,10 +116,15 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 	assign IF_CW = { 3'b0, 3'b001, 1'b1, 2'b11, 2'b01,  1'b0,  1'b0, 1'b1, 1'b0, 5'b0, 1'b0, 2'b11, 1'b0, 1'b0, 5'b0, 5'b0, 5'b0 };
 
 	// EX1_CW
-				  //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,     SB 
-				  //                    x                   x                                                                                     x
+				  
 	assign EX1_CW = { 3'b010, 3'b000, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b00100, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[4:0], 5'b0 };
 
+					//  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,     SB 
+				    //                    x                   x                                                                                     x
+	assign MOVK2_CW = { 3'b010, 3'b000, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b00100, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[4:0], 5'b0 }
+
+	// MUL Step 2 - Rm <- RM & 64'h00000000FFFFFFFF
+	assign MUL2_CW
 	///////////////////////// Data Imm. /////////////////////////
 	// Arithmetic Immediate Operators (ADDI, SUBI)
 					   //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,      FS,               C0,      size,          MW,   RW,   DA,     SA,     SB 
@@ -217,10 +222,10 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 	assign ArithReg_CW = { 3'b0, 3'b0, 1'b0, 2'b00, 2'b00, 1'b0,  1'b0, 1'b0, I[29], { 4'b0100, I[30] }, I[30], { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[9:5], I[20:16] };
 
 	//////////////////////////////////////////////////////////////
-
-	/* TODO: implement all of the partial control words
-	B_cond_CW
-	*/
+	// Optional Instruction
+	// MUL 1 - Rd <- 0
+				  //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,       SB 
+	assign MUL_CW = { 3'b000, 3'b010, 1'b0, 2'b00, 2'b00, 1'b0,  1'b0, 1'b0, 1'b0, 5'b00000, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], 5'b11111, 5'b11111 };
 
 endmodule
 
@@ -229,7 +234,7 @@ module ConstantGenerator(constant, select, I);
   	input [2:0] select;
   	input [31:0] I;
 
-	Mux8to1Nbit constant_mux (
+	Mux16to1Nbit constant_mux (
   		.F(constant),
   		.S(select),
   		.I0({52'b0, I[21:10]}),     	// zf I[21:10]
@@ -240,6 +245,14 @@ module ConstantGenerator(constant, select, I);
   		.I5({{45{I[23]}}, I[23:5]}),	// se I[23:5]
   		.I6({{55{I[20]}}, I[20:12]}),	// se I[20:12]
   		.I7({58'b0, I[15:10]})			// Not used (I'm going to use for shift)
+  		.I8({ 32'b0, 32'hFFFFFFFF }),
+  		.I9(64'b0),
+		.I10(64'b0),
+		.I11(64'b0),
+		.I12(64'b0),
+		.I13(64'b0),
+		.I14(64'b0),
+		.I15(64'b0)
   	);
 	defparam constant_mux.N = 64;
 endmodule
