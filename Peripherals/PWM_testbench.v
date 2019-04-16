@@ -1,9 +1,9 @@
 module PWM_testbench();
     reg clock, reset;
-    wire [63:0] count;
+    wire [7:0] count;
 
     CounterNbit dut (count, clock, reset);
-    defparam dut.N = 64;
+    defparam dut.N = 8;
 
     initial begin
         clock <= 1'b1;
@@ -15,6 +15,6 @@ module PWM_testbench();
         #5 clock <= ~clock;
 
     always begin
-        #100 $stop;
+        #11000 $stop;
     end
 endmodule
