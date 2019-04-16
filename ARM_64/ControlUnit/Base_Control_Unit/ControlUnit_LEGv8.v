@@ -116,7 +116,13 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 	assign IF_CW = { 3'b0, 3'b001, 1'b1, 2'b11, 2'b01,  1'b0,  1'b0, 1'b1, 1'b0, 5'b0, 1'b0, 2'b11, 1'b0, 1'b0, 5'b0, 5'b0, 5'b0 };
 
 	// EX1_CW
-				  
+	mux2to1_Nbit EX1_MUX (
+		.F(EX1_CW),
+		.S(I[30]),
+		.I0(MUL2_CW),
+		.I1(MOVK2_CW)
+	);
+
 	assign EX1_CW = { 3'b010, 3'b000, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b00100, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[4:0], 5'b0 };
 
 					//  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,     SB 
@@ -124,7 +130,8 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 	assign MOVK2_CW = { 3'b010, 3'b000, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b00100, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[4:0], 5'b0 }
 
 	// MUL Step 2 - Rm <- RM & 64'h00000000FFFFFFFF
-	assign MUL2_CW
+				//     CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,     SB 
+	assign MUL2_CW = { 3'b1000 };
 	///////////////////////// Data Imm. /////////////////////////
 	// Arithmetic Immediate Operators (ADDI, SUBI)
 					   //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,      FS,               C0,      size,          MW,   RW,   DA,     SA,     SB 
