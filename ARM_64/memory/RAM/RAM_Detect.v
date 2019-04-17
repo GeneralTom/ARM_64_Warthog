@@ -17,4 +17,3 @@ module RAM_Detect(data, address, mem_write, mem_read, size, clock);
 	RAM_64bit RAM (clock, address[ADDR_WIDTH-1:0], data, chip_select, mem_write, mem_read, size);
 	defparam RAM.ADDR_WIDTH = ADDR_WIDTH;
 endmodule
-

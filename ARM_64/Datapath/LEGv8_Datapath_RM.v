@@ -59,18 +59,18 @@ module LEGv8_Datapath_RM(ControlWord, data, address, reset, clock, constant, sta
 
 	Decoder2to4 data_enable (DS, data_signals);
 
-	assign status = {SR_out, data_signals[0]};
+	assign status = {SR_out, current_status[0]};
 
 	//            Datapath_LEGv8 (data, address, reset, clock, constant, DA, SA, SB, W, status, FS, C0, IR_out, IL, SR_out, SL, PS, PCsel, Bsel, EN_ALU, EN_B, EN_PC, EN_ADDR_ALU, EN_ADDR_PC, r0, r1, r2, r3, r4, r5, r6, r7);
 	Datapath_LEGv8 base_datapath (data, address, reset, clock, constant, DA, SA, SB, RW, current_status, FS, C0, IR_out, IL, SR_out, SL, PS, PCsel, Bsel, data_signals[0], data_signals[1], data_signals[2], addr_signals[0], addr_signals[1], r0, r1, r2, r3, r4, r5, r6, r7);
 	defparam base_datapath.PC_RESET_VALUE = 32'h40000000;
 
 	//   RAM_64bit(clock, address, data, chip_select, write_enable, output_enable, size);
-	RAM_Detect ram (data, address, MW, data_signals[3], size, clock);
+	RAM_Detect ram (data, address, MW, data_signals[3], size, ~clock);
 	defparam ram.BASE_ADDR = 32'h60000000;
 	defparam ram.ADDR_WIDTH = 12;
 
-	ROM_Detect rom (data, address, data_signals[3], size, clock);
+	ROM_Detect rom (data, address, data_signals[3], size, ~clock);
 	defparam rom.BASE_ADDR = 32'h40000000;
 	defparam rom.ADDR_WIDTH = 10;
 endmodule

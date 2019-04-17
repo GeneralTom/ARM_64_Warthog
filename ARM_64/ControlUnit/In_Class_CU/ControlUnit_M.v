@@ -119,5 +119,4 @@
 	LogicReg_CW, ArithReg_CW
 	*/
 
-endmodule
-*/
+//endmodule
