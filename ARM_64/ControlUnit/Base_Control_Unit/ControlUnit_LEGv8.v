@@ -1,6 +1,6 @@
 module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 	parameter FULL_CW_LEN = 41;
-	output [33:0] control_word; // not using our cw
+	output [33:0] control_word;
 	output [63:0] constant;
 
 	input clock, reset;
@@ -24,7 +24,7 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 	defparam state_reg.N = 3;
 
 	// create al intermediate control words
-	wire [FULL_CW_LEN-1:0] IF_CW, EX0_CW, EX1_CW, EX2_CW, MUL2_CW, MUL3_CW, MUL4_CW, MUL5_CW, MUL6_CW, MUL7_CW;
+	wire [FULL_CW_LEN-1:0] IF_CW, EX0_CW, EX1_CW, EX2_CW, EX3_CW, EX4_CW, EX5_CW, EX6_CW;
 	Mux8to1Nbit state_mux (
 		.F(full_control_word),
 		.S(state),
@@ -32,10 +32,10 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 		.I1(EX0_CW),
 		.I2(EX1_CW),
 		.I3(EX2_CW),
-		.I4(MUL4_CW),
-		.I5(MUL5_CW),
-		.I6(MUL6_CW),
-		.I7(MUL7_CW)
+		.I4(EX3_CW),
+		.I5(EX4_CW),
+		.I6(EX5_CW),
+		.I7(EX6_CW)
 	);
 	defparam state_mux.N = FULL_CW_LEN;
 
@@ -52,7 +52,7 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 	);
 	defparam ex0_mux.N = FULL_CW_LEN;
 
-	wire [FULL_CW_LEN-1:0] ArithImm_CW, LogicImm_CW, MOV_CW, BitField_CW, EXTR_CW;
+	wire [FULL_CW_LEN-1:0] ArithImm_CW, LogicImm_CW, MOV_CW, EXTR_CW;
 	Mux8to1Nbit data_imm_mux (
 		.F(DataImm_CW),
 		.S(I[25:23]),
@@ -90,7 +90,8 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 
 	assign Mem_CW = mem_mux_sel ? LDUR_STUR_CW : MemOther_CW;
 
-	wire [FULL_CW_LEN-1:0] LogicReg_CW, ArithReg_CW, AllKindsOfCrazyStuff_CW, MUL_CW;
+	wire [FULL_CW_LEN-1:0] LogicReg_CW, ArithReg_CW, AllKindsOfCrazyStuff_CW;
+	wire [FULL_CW_LEN-1:0] MUL_CW, MUL2_CW, MUL3_CW, MUL4_CW, MUL5_CW, MUL6_CW, MUL7_CW;
 	Mux4to1Nbit data_reg_mux (
 		.F(DataReg_CW),
 		.S({I[28], I[24]}),
@@ -102,12 +103,9 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 	defparam data_reg_mux.N = FULL_CW_LEN;
 
 	// implement all optional control words as 0
-	assign EX2_CW = MUL3_CW;
-	assign BitField_CW = 41'b0;
 	assign EXTR_CW = 41'b0;
 	assign MemOther_CW = 41'b0;
 	assign AllKindsOfCrazyStuff_CW = 41'b0;
-	// assign MUL_CW = 41'b0;
 
 	////////////////////////// Main MUX //////////////////////////
 	// Instruction Fetch
@@ -123,34 +121,12 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 		.I1(MOVK2_CW)
 	);
 	defparam EX1_MUX.N = FULL_CW_LEN;
-					//  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,     SB 
-				    //                    x                   x                                                                                     x
-	assign MOVK2_CW = { 4'b0010, 3'b000, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b00100, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[4:0], 5'b0 };
 
-	// MUL Step 2 - Rm <- RM & 64'h00000000FFFFFFFF
-				//     CGS,     NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,       SA,       SB 
-	assign MUL2_CW = { 4'b1000, 3'b011, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b00000, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[20:16], I[20:16], 5'b0 };
-
-	///////////////////////// MUL CWs /////////////////////////
-	// MUL Step 3 - Rn <- Rn & 64'h00000000FFFFFFFF
-				//     CGS,     NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,     SB 
-	assign MUL3_CW = { 4'b1000, 3'b100, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b00000, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[9:5], I[9:5], 5'b0 };
-
-	// MUL Step 4 - Rn & 1
-				//     CGS,     NS,                              AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,   SA,     SB 
-	assign MUL4_CW = { 4'b1001, { 1'b1, status[0], ~status[0] }, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b00000, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b0, 5'b0, I[9:5], 5'b0 };
-
-	// MUL Step 5 - Rd <- Rd + Rm
-				//     CGS,     NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,     SB 
-	assign MUL5_CW = { 4'b0000, 3'b110, 1'b0, 2'b00, 2'b00, 1'b0,  1'b0, 1'b0, 1'b0, 5'b01000, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[4:0], I[20:16] };
-
-	// MUL Step 6 - Rn <- Rn >> 1
-				//     CGS,     NS,                      AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,     SB 
-	assign MUL6_CW = { 4'b1001, { { 2{~status[0]} }, 1'b0 }, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b10100, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[9:5], I[9:5], 5'b0 };
-
-	// MUL Step 7 - Rm <- Rm << 1
-				//     CGS,     NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,       SA,       SB 
-	assign MUL7_CW = { 4'b1001, 3'b100, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b10000, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[20:16], I[20:16], 5'b0 };
+	assign EX2_CW = MUL3_CW;
+	assign EX3_CW = MUL4_CW;
+	assign EX4_CW = MUL5_CW;
+	assign EX5_CW = MUL6_CW;
+	assign EX6_CW = MUL7_CW;
 
 	///////////////////////// Data Imm. /////////////////////////
 	// Arithmetic Immediate Operators (ADDI, SUBI)
@@ -194,7 +170,11 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 				  //  CGS,              NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,                        C0,     size,          MW,   RW,   DA,     SA,          SB 
 				  //                              x                  x                                                                                                            x
 	assign MOV_CW = { { 3'b001, I[29] }, { 1'b0, I[29], 1'b0 }, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, { 2'b00, ~I[29] , 2'b00 }, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], MOV_REG_Val, 5'b0 };
-	
+
+					//  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,     SB 
+				    //                    x                   x                                                                                     x
+	assign MOVK2_CW = { 4'b0010, 3'b000, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b00100, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[4:0], 5'b0 };
+
 	////////////////////////// Branch //////////////////////////
 	// B / BL
 				   //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size, MW,   RW,    DA,       SA,   SB 
@@ -207,9 +187,6 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 
 	// I24 is 0 for CBZ and 1 for CBNZ
 	assign CB_PS[0] = I[24] ^ status[0]; // zero status bit
-
-						// CGS,   NS,   SL,   IL,   DS,    AS,   PCsel, Bsel, mem_write, size,  RegWrite, PS,    FS,   SB,   SA,   DA
-	//assign CBZ_CBNZ_CW = {3'd5, 3'b0, 1'b0, 1'b0, 2'bxx, 1'bx, 1'b1,  1'bz, 1'b0,      2'bxx, 1'b0,     CB_PS, 5'bx, 5'bx, 5'bx, 5'bx}
 
 	 				   //  CGS,    NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,   size,  MW,   RW,   DA,   SA,   SB 
 					   //                  x      x                   z                 x         x     x                  x     x     x
@@ -250,9 +227,33 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 
 	//////////////////////////////////////////////////////////////
 	// Optional Instruction
-	// MUL 1 - Rd <- 0
-				  //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,       SB 
+	// MUL Step 1 - Rd <- 0
+				  //  CGS,     NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,       SB 
 	assign MUL_CW = { 4'b0000, 3'b010, 1'b0, 2'b00, 2'b00, 1'b0,  1'b0, 1'b0, 1'b0, 5'b00000, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], 5'b11111, 5'b11111 };
+
+	// MUL Step 2 - Rm <- Rm & 64'h00000000FFFFFFFF
+				//     CGS,     NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,       SA,       SB 
+	assign MUL2_CW = { 4'b1000, 3'b011, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b00000, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[20:16], I[20:16], 5'b0 };
+
+	// MUL Step 3 - Rn <- Rn & 64'h00000000FFFFFFFF
+				//     CGS,     NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,     SB 
+	assign MUL3_CW = { 4'b1000, 3'b100, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b00000, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[9:5], I[9:5], 5'b0 };
+
+	// MUL Step 4 - Rn & 1
+				//     CGS,     NS,                              AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,   SA,     SB 
+	assign MUL4_CW = { 4'b1001, { 1'b1, status[0], ~status[0] }, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b00000, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b0, 5'b0, I[9:5], 5'b0 };
+
+	// MUL Step 5 - Rd <- Rd + Rm
+				//     CGS,     NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,     SB 
+	assign MUL5_CW = { 4'b0000, 3'b110, 1'b0, 2'b00, 2'b00, 1'b0,  1'b0, 1'b0, 1'b0, 5'b01000, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[4:0], I[20:16] };
+
+	// MUL Step 6 - Rn <- Rn >> 1
+				//     CGS,     NS,                    AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,     SB 
+	assign MUL6_CW = { 4'b1001, { { 3{~status[0]} } }, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b10100, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[9:5], I[9:5], 5'b0 };
+
+	// MUL Step 7 - Rm <- Rm << 1
+				//     CGS,     NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,       SA,       SB 
+	assign MUL7_CW = { 4'b1001, 3'b100, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b10000, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[20:16], I[20:16], 5'b0 };
 
 endmodule
 
@@ -272,7 +273,7 @@ module ConstantGenerator(constant, select, I);
   		.I5({{45{I[23]}}, I[23:5]}),	// se I[23:5]
   		.I6({{55{I[20]}}, I[20:12]}),	// se I[20:12]
   		.I7({58'b0, I[15:10]}),			// Not used (I'm going to use for shift)
-  		.I8({ 32'b0, 32'hFFFFFFFF }),
+  		.I8(64'h00000000FFFFFFFF),
   		.I9(64'b1),
 		.I10(64'b0),
 		.I11(64'b0),
