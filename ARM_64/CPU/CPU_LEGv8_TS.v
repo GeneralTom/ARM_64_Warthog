@@ -19,7 +19,7 @@ module CPU_LEGv8_TS (data, address, instruction, clock, reset, r0, r1, r2, r3, r
         .clock(clock),
         .reset(reset)
     );
-    defparam control_unit.FULL_CW_LEN = 40;
+    defparam control_unit.FULL_CW_LEN = 41;
 
     LEGv8_Datapath_TS datapath (
         .ControlWord(control_word),

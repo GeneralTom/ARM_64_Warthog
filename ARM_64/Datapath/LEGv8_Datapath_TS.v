@@ -72,4 +72,7 @@ module LEGv8_Datapath_TS(ControlWord, data, address, reset, clock, constant, sta
 	ROM_Detect rom (data, address, data_signals[3], size, ~clock);
 	defparam rom.BASE_ADDR = 32'h20000000;
 	defparam rom.ADDR_WIDTH = 8;
+
+	Timer_TS timer1 (data, address, MW, data_signals[3], size, clock, reset);
+	defparam timer1.BASE_ADDR = 32'h80000000;
 endmodule
