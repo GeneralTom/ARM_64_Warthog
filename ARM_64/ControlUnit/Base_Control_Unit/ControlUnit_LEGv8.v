@@ -25,6 +25,7 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 
 	// create al intermediate control words
 	wire [FULL_CW_LEN-1:0] IF_CW, EX0_CW, EX1_CW, EX2_CW, EX3_CW, EX4_CW, EX5_CW, EX6_CW;
+	wire [FULL_CW_LEN-1:0] MOVK2_CW;
 	Mux8to1Nbit state_mux (
 		.F(full_control_word),
 		.S(state),
