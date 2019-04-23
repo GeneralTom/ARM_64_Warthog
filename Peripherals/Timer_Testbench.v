@@ -31,7 +31,7 @@ module Timer_Testbench ();
     always begin
         #10 // Sets period to 8'h20
         data_in <= 64'h0000000000000020;
-        address <= 32'h80000002;
+        address <= 32'h80000010;
         mem_write <= 1'b1;
         mem_read <= 1'b0;
         #10 // Read period back
@@ -39,7 +39,7 @@ module Timer_Testbench ();
         mem_read <= 1'b1;
         #10 // Set the conditions register to start the timer and use period
         data_in <= 64'b0101;
-        address <= 32'h80000001;
+        address <= 32'h80000008;
         mem_write <= 1'b1;
         mem_read <= 1'b0;
         #10 // Just view timer output
@@ -47,12 +47,12 @@ module Timer_Testbench ();
         mem_write <= 1'b0;
         mem_read <= 1'b1;
         #500 // View the condition register
-        address <= 32'h80000001;
+        address <= 32'h80000008;
         mem_write <= 1'b0;
         mem_read <= 1'b1;
         #10 // Set the condition register to not use the period
         data_in <= 64'b0001;
-        address <= 32'h80000001;
+        address <= 32'h80000008;
         mem_write <= 1'b1;
         mem_read <= 1'b0;
         #10 // Watch output again

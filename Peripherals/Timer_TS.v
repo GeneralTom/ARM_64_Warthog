@@ -5,13 +5,13 @@
  * 3 Registers - PERIODX, TCONX, TIMERX
  * 
  * PERIODX:
- * Address - 2 relative to the base address 
- * EX: 32'h80000002
+ * Address - 16 relative to the base address 
+ * EX: 32'h80000010
  * Description - Holds a 16-bit value that acts as a maximum (if passed, count will reset to zero)
  *
  * TCONX:
- * Address - 1 relative to the base address
- * EX: 32'h80000001
+ * Address - 8 relative to the base address
+ * EX: 32'h80000008
  * Description - Holds an 8-bit value, where only the lower three bits are used
  * Bit 0 - Enable (1) / Disable (0) Timer
  * Bit 1 - 1 if timer passed period / overflowed
@@ -26,7 +26,7 @@
 
 module Timer_TS (data, address, mem_write, mem_read, size, clock, reset);
     parameter BASE_ADDR = 32'h80000000; // Can be set when the timer is initialized
-    localparam ADDR_WIDTH = 4; // The timer will always use only one hex digit of address space
+    localparam ADDR_WIDTH = 8; // The timer will always use only one hex digit of address space
 
     inout [63:0] data;
     input [31:0] address;
@@ -46,7 +46,7 @@ module Timer_TS (data, address, mem_write, mem_read, size, clock, reset);
 endmodule
 
 module Timer16bit (data, address, chip_select, mem_read, mem_write, size, clock, reset);
-    parameter ADDR_WIDTH = 8; // Will always be 4
+    parameter ADDR_WIDTH = 8;
 
     inout [63:0] data;
     input [ADDR_WIDTH-1:0] address;
@@ -62,7 +62,7 @@ module Timer16bit (data, address, chip_select, mem_read, mem_write, size, clock,
     wire [63:0] data_out;
     Mux4to1Nbit data_mux (
         .F(data_out),
-        .S(address[1:0]),
+        .S(address[4:3]),
         .I0({ 48'b0, count }),
         .I1({ 56'b0, conditions }),
         .I2({ 48'b0, period }),
@@ -72,14 +72,14 @@ module Timer16bit (data, address, chip_select, mem_read, mem_write, size, clock,
     assign data = (chip_select & mem_read & ~mem_write) ? data_out : 64'bz;
 
     wire period_load;
-    assign period_load = (address == 4'h2 && chip_select && mem_write && ~mem_read) ? 1'b1 : 1'b0;
+    assign period_load = (address[4:3] == 2'b10 && chip_select && mem_write && ~mem_read) ? 1'b1 : 1'b0;
                        // Q, D, L, R, clock
     RegisterNbit PERIODX (period, data[15:0], period_load, reset, clock);
     defparam PERIODX.N = 16;
     
     wire [7:0] conditions_in;
     wire [7:0] timer_conditions_out;
-    assign conditions_in = (address == 4'h1 && chip_select && mem_write && ~mem_read) ? data[7:0] : timer_conditions_out;
+    assign conditions_in = (address[4:3] == 2'b01 && chip_select && mem_write && ~mem_read) ? data[7:0] : timer_conditions_out;
 
     /**
      * List of different conditions:
