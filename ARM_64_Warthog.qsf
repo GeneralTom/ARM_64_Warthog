@@ -434,4 +434,5 @@ set_global_assignment -name VERILOG_FILE ARM_64/misc/Carry_Lookahead_Adders.v
 set_global_assignment -name VERILOG_FILE ARM_64/RegisterFile/RegisterNbit.v
 set_global_assignment -name VERILOG_FILE ARM_64/RegisterFile/RegisterFile32x64_Testbench.v
 set_global_assignment -name VERILOG_FILE ARM_64/RegisterFile/RegisterFile32x64.v
+set_global_assignment -name VERILOG_FILE ARM_64/misc/Register16bit.v
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

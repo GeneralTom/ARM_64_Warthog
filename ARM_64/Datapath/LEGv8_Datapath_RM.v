@@ -73,4 +73,7 @@ module LEGv8_Datapath_RM(ControlWord, data, address, reset, clock, constant, sta
 	ROM_Detect rom (data, address, data_signals[3], size, ~clock);
 	defparam rom.BASE_ADDR = 32'h40000000;
 	defparam rom.ADDR_WIDTH = 10;
+
+	//GPIO_RM gpio_0 (data, address, mem_write, mem_read, size, clock);
+	//defparam	gpio_0.BASE_ADDR = 32'h00000000;
 endmodule
