@@ -1,4 +1,4 @@
-// auto generated from http://users.rowan.edu/~haskellt8/assembler/
+/*// auto generated from http://users.rowan.edu/~haskellt8/assembler/
 module rom_case(out, address);
 	output reg [31:0] out;
 	input  [15:0] address; // address- 16 deep memory
@@ -28,7 +28,7 @@ module rom_case(out, address);
 			default: out=32'hD60003E0; //BR XZR
 		endcase
 	end
-endmodule
+endmodule*/
 
 /*
 C code for above asm:
