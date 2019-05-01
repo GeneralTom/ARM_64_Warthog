@@ -112,7 +112,7 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 	// Instruction Fetch
 				 //  CGS,  NS,     AS,   DS,    PS,     PCsel, Bsel, IL,   SL,   FS,   C0,   size,  MW,   RW,   DA,   SA,   SB
 				 //	  x                                   x      x                 x    x                         x     x     x
-	assign IF_CW = { 4'b0, 3'b001, 1'b1, 2'b11, 2'b01,  1'b0,  1'b0, 1'b1, 1'b0, 5'b0, 1'b0, 2'b11, 1'b0, 1'b0, 5'b0, 5'b0, 5'b0 };
+	assign IF_CW = { 4'b0, 3'b001, 1'b1, 2'b11, 2'b01,  1'b0,  1'b0, 1'b1, 1'b0, 5'b0, 1'b0, 2'b10, 1'b0, 1'b0, 5'b0, 5'b0, 5'b0 };
 
 	// EX1_CW
 	mux2to1_Nbit EX1_MUX (
