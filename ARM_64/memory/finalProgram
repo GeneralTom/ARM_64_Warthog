@@ -9,3 +9,4 @@ MOVZ X1, 420        // Timer Period
 STUR X1, [X10, #16] // Store period
 
 MOVZ X2, 5          // Bits to start timer and use period
+STURB X2, [X10, #8] // Edit config register, start timer using period
