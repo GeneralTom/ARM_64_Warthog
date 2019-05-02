@@ -1,0 +1,51 @@
+MOVZ X8, 0          // Places RAM address into X8
+LSL X8, X8, 0       // Since zero, shift zero times
+MOVZ X9, 2          // Places ROM address into X9
+LSL X9, X9, 28      // Shifts ROM address 28 times
+MOVZ X10, 8         // Places Timer address into X10
+LSL X10, X10, 28    // Shifts Timer address 28 times
+MOVZ X1, 420        // Timer Period
+STUR X1, [X10, #16] // Store period
+MOVZ X2, 5          // Bits to start timer and use period
+STURB X2, [X10, #8] // Edit config register, start timer using period
+MOVZ X4, 69         // First number for multiply
+MOVZ X5, 289        // Second number to multiply (ADD MULTIPLY AFTER THIS LINE)
+
+STURB X6, [X8, #48] // Store first byte of MUL result to RAM
+LDURB X4, [X8, #48] // Load first byte of MUL result into X4
+LDUR X5, [X10, #0]  // Get timer value (ADD MULTIPLY AFTER THIS LINE)
+
+MOVZ X2, 4          // Stop timer value, while keeping period enabled
+STUR X2, [X10, #8]  // Actually stop the timer
+LDUR X3, [X10, #0]  // Last timer read
+BR X2 // Repeat program
+
+Below is the rom_case file
+module rom_case(out, address);
+output reg [31:0] out;
+input  [15:0] address; // address- 16 deep memory  
+always @(address) begin
+case (address)
+16'h0000:  out = 32'b11010010100000000000000000001000; // MOVZ X8, 0          // Places RAM address into X8
+16'h0001:  out = 32'b11010011011000000000000100001000; // LSL X8, X8, 0       // Since zero, shift zero times
+16'h0002:  out = 32'b11010010100000000000000001001001; // MOVZ X9, 2          // Places ROM address into X9
+16'h0003:  out = 32'b11010011011000000111000100101001; // LSL X9, X9, 28      // Shifts ROM address 28 times
+16'h0004:  out = 32'b11010010100000000000000100001010; // MOVZ X10, 8         // Places Timer address into X10
+16'h0005:  out = 32'b11010011011000000111000101001010; // LSL X10, X10, 28    // Shifts Timer address 28 times
+16'h0006:  out = 32'b11010010100000000011010010000001; // MOVZ X1, 420        // Timer Period
+16'h0007:  out = 32'b11111000000000010000000101000001; // STUR X1, [X10, #16] // Store period
+16'h0008:  out = 32'b11010010100000000000000010100010; // MOVZ X2, 5          // Bits to start timer and use period
+16'h0009:  out = 32'b00111000000000001000000101000010; // STURB X2, [X10, #8] // Edit config register, start timer using period
+16'h000a:  out = 32'b11010010100000000000100010100100; // MOVZ X4, 69       // First number for multiply
+16'h000b:  out = 32'b11010010100000000010010000100101; // MOVZ X5, 289      // Second number to multiply
+16'h000c:  out = 32'b00111000000000110000000100000110; // STURB X6, [X8, #48] // Store first byte of MUL result to RAM
+16'h000d:  out = 32'b00111000010000110000000100000100; // LDURB X4, [X8, #48] // Load first byte of MUL result into X4
+16'h000e:  out = 32'b11111000010000000000000101000101; // LDUR X5, [X10, #0]    // Get timer value
+16'h000f:  out = 32'b11010010100000000000000010000010; // MOVZ X2, 4            // Stop timer value, while keeping period enabled
+16'h0010:  out = 32'b11111000000000001000000101000010; // STUR X2, [X10, #8]    // Actually stop the timer
+16'h0011:  out = 32'b11111000010000000000000101000011; // LDUR X3, [X10, #0]    // Last timer read
+16'h0012:  out = 32'b11010110000000000000000100100000; // BR X9 // Repeat program
+default: out=32'hD60003E0; //BR XZR
+endcase
+end
+endmodule
