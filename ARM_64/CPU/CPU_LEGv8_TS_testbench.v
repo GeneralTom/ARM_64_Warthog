@@ -17,6 +17,6 @@ module CPU_LEGv8_TS_testbench ();
     #5 clock <= ~clock;
 
     always begin
-        #1000 $stop;
+        #2000 $stop;
     end
 endmodule
