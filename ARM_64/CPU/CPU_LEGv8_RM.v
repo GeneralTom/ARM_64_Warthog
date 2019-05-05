@@ -1,5 +1,6 @@
-module CPU_LEGv8_RM (data, address, instruction, clock, reset, r0, r1, r2, r3, r4, r5, r6, r7);
+module CPU_LEGv8_RM (data, IO, address, instruction, clock, reset, r0, r1, r2, r3, r4, r5, r6, r7);
     inout [63:0] data;
+    inout [15:0] IO;
     output [31:0] address;
     input clock, reset;
 
@@ -31,6 +32,7 @@ module CPU_LEGv8_RM (data, address, instruction, clock, reset, r0, r1, r2, r3, r
         .reset(reset),
 
         .data(data),
+        .IO(IO),
         .address(address),
         .r0(r0), .r1(r1), .r2(r2), .r3(r3), .r4(r4), .r5(r5), .r6(r6), .r7(r7)
     );

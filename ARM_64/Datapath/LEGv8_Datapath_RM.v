@@ -1,10 +1,11 @@
-module LEGv8_Datapath_RM(ControlWord, data, address, reset, clock, constant, status, IR_out, current_status, r0, r1, r2, r3, r4, r5, r6, r7); // before r0 -> write_enable, read_enable, size,
+module LEGv8_Datapath_RM(ControlWord, data, IO, address, reset, clock, constant, status, IR_out, current_status, r0, r1, r2, r3, r4, r5, r6, r7); // before r0 -> write_enable, read_enable, size,
 	//                         Datapath_LEGv8 (data, address, reset, clock, constant, status, FS, C0, Bsel, EN_ALU, EN_B, EN_ADDR_ALU, r0, r1, r2, r3, r4, r5, r6, r7);
 
 	input [33:0] ControlWord; // Combination of control signals
 
 	// Main Outputs
 	inout [63:0] data; // Set to inout because read/write from memory
+	inout [15:0] IO;
 	output tri [31:0] address;
 
 	// Basic control signals
@@ -74,6 +75,6 @@ module LEGv8_Datapath_RM(ControlWord, data, address, reset, clock, constant, sta
 	defparam rom.BASE_ADDR = 32'h40000000;
 	defparam rom.ADDR_WIDTH = 10;
 
- 	// GPIO_RM gpio_0 (data, address, mem_write, mem_read, size, clock);
-	// defparam	gpio_0.BASE_ADDR = 32'h00000000;
+ 	GPIO_RM gpio_0 (data, IO, address, mem_write, mem_read, size, clock);
+	defparam	gpio_0.BASE_ADDR = 32'h00000000;
 endmodule
