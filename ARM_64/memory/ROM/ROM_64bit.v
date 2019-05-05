@@ -16,7 +16,7 @@ module ROM_64bit(data, address, clock, size);
 		// !!!!!!!!!!!!! Change this to the path for your .mem file !!!!!!!!!!!!!!!!
 		// !!!!!!!!!!!!!                                            !!!!!!!!!!!!!!!!
 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		$readmemb("C:/Comp_Arch_Projects/github/ARM_64_Warthog/ARM_64/memory/test_program_binary_RM_copy.mem", rom_array);
+		$readmemb("C:/Comp_Arch_Projects/github/ARM_64_Warthog/ARM_64/memory/test_full_mov.mem", rom_array);
 	end
 
 	// model ROM as dual port memory where we read from the address and address + 1
