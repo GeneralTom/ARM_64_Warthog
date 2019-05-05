@@ -131,7 +131,7 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 
 	///////////////////////// Data Imm. /////////////////////////
 	// Arithmetic Immediate Operators (ADDI, SUBI)
-					   //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,      FS,               C0,      size,          MW,   RW,   DA,     SA,     SB 
+					   //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,      FS,               C0,      size,          MW,   RW,   DA,     SA,     SB
 					   //                    x                  x                                                                                                  x
 	assign ArithImm_CW = { 4'b0000, 3'b000, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, I[29], { 4'b0100, I[30] }, I[30], { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[9:5], 5'b0 };
 
@@ -139,7 +139,7 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 
 	wire [1:0] Logic_FS_bits;
 	wire [1:0] XOR_or_shift;
-	
+
 	Mux4to1Nbit Logic_mux (
 		.F(Logic_FS_bits),
 		.S(I[30:29]),
@@ -160,25 +160,25 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 
 	wire ANDS_Set_Flags;
 	assign ANDS_Set_Flags = (I[30] & I[29]) & (Logic_FS_bits === 2'b00);
-					   //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,               FS,                              C0,     size,          MW,   RW,   DA,     SA,     SB 
+					   //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,               FS,                              C0,     size,          MW,   RW,   DA,     SA,     SB
 					   //                    x                   x                                                                                                                     x
 	assign LogicImm_CW = { { 1'b0, { 3{I[22]} } } , 3'b000, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, ANDS_Set_Flags, { I[22], Logic_FS_bits, 2'b00 }, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[9:5], 5'b0 };
 
 	// MOVZ / MOVK
 	wire [4:0] MOV_REG_Val;
 	assign MOV_REG_Val = I[29] ? I[4:0] : 5'b11111;
-	
-				  //  CGS,              NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,                        C0,     size,          MW,   RW,   DA,     SA,          SB 
+
+				  //  CGS,              NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,                        C0,     size,          MW,   RW,   DA,     SA,          SB
 				  //                              x                  x                                                                                                            x
 	assign MOV_CW = { { 3'b001, I[29] }, { 1'b0, I[29], 1'b0 }, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, { 2'b00, ~I[29] , 2'b00 }, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], MOV_REG_Val, 5'b0 };
 
-					//  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,     SB 
+					//  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,     SB
 				    //                    x                   x                                                                                     x
 	assign MOVK2_CW = { 4'b0010, 3'b000, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b00100, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[4:0], 5'b0 };
 
 	////////////////////////// Branch //////////////////////////
 	// B / BL
-				   //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size, MW,   RW,    DA,       SA,   SB 
+				   //  CGS,    NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size, MW,   RW,    DA,       SA,   SB
 				   //                   x                           x                 x     x     x                            x     x
 	assign B_BL_CW = { 4'b0100, 3'b000, 1'b0, 2'b10, 2'b11, 1'b1,  1'b0, 1'b0, 1'b0, 5'b0, 1'b0, 2'b0, 1'b0, I[31], 5'b11110, 5'b0, 5'b0 };
 
@@ -189,10 +189,10 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 	// I24 is 0 for CBZ and 1 for CBNZ
 	assign CB_PS[0] = I[24] ^ status[0]; // zero status bit
 
-	 				   //  CGS,    NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,   size,  MW,   RW,   DA,   SA,   SB 
+	 				   //  CGS,    NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,   size,  MW,   RW,   DA,   SA,   SB
 					   //                  x      x                   z                 x         x     x                  x     x     x
 	assign CBZ_CBNZ_CW = { 4'b0101, 3'b0, 1'b0, 2'b00, CB_PS, 1'b1,  1'b0, 1'b0, 1'b0, 5'b01000, 1'b0, 2'b11, 1'b0, 1'b0, 5'b0, 5'b11111, I[4:0] };
-	
+
 	// B.cond
 	wire [1:0] B_cond_PS;
 	wire B_cond_result;
@@ -200,60 +200,60 @@ module ControlUnit_LEGv8(control_word, constant, I, status, clock, reset);
 						//   encoding, status, result
 	B_Cond_Case help_me_plz (I[4:0], status, B_cond_result);
 
-		 			 //  CGS,    NS,   AS,   DS,      PS,        PCsel, Bsel, IL,   SL,   FS,   C0,   size,  MW,   RW,   DA,   SA,   SB 
+		 			 //  CGS,    NS,   AS,   DS,      PS,        PCsel, Bsel, IL,   SL,   FS,   C0,   size,  MW,   RW,   DA,   SA,   SB
 					 //                  x      x                       z                 x     x      x                 x     x     x
 	assign B_cond_CW = { 4'b0101, 3'b0, 1'b0, 2'b00, B_cond_PS, 1'b1,  1'b0, 1'b0, 1'b1, 5'b0, 1'b0, 2'b00, 1'b0, 1'b0, 5'b0, 5'b0, 5'b0 };
 
 	// BR
-			 	 //  CGS,  NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size, MW,   RW,   DA,   SA,     SB 
+			 	 //  CGS,  NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,   C0,   size, MW,   RW,   DA,   SA,     SB
 				 //                x     x                    x                 x    x     x                 x              x
 	assign BR_CW = { 4'b0, 3'b0, 1'b0, 2'b00, 2'b10, 1'b0,  1'b0, 1'b0, 1'b0, 5'b0, 1'b0, 2'b0, 1'b0, 1'b0, 5'b0, I[9:5], 5'b0 };
 
 	////////////////////////// Memory //////////////////////////
 	// LDUR / STUR
-				 	    //  CGS,    NS,   AS,     DS,            PS,    PCsel, Bsel, IL,   SL,   FS,       C0,   size,     MW,     RW,    DA,     SA,     SB 
+				 	    //  CGS,    NS,   AS,     DS,            PS,    PCsel, Bsel, IL,   SL,   FS,       C0,   size,     MW,     RW,    DA,     SA,     SB
 						//                                                x                                                                                 x
 	assign LDUR_STUR_CW = { 4'b0110, 3'b0, 1'b0, { I[22], 1'b1 }, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b01000, 1'b0, I[31:30], ~I[22], I[22], I[4:0], I[9:5], I[4:0] };
 
 	///////////////////////// Data Reg. /////////////////////////
 	// Logical Register
-				 	   //  CGS,  NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,               FS,                              C0,      size,          MW,   RW,   DA,     SA,     SB 
+				 	   //  CGS,  NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,               FS,                              C0,      size,          MW,   RW,   DA,     SA,     SB
 					   //                x                   x
 	assign LogicReg_CW = { 4'b0, 3'b0, 1'b0, 2'b00, 2'b00, 1'b0,  1'b0, 1'b0, ANDS_Set_Flags, { 1'b0, Logic_FS_bits, 2'b00 }, 1'b0 , { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[9:5], I[20:16] };
 
 	// Arithmetic Register
-				 	   //  CGS,  NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,      FS,               C0,      size,          MW,   RW,   DA,     SA,     SB 
+				 	   //  CGS,  NS,   AS,   DS,    PS,    PCsel, Bsel, IL,   SL,      FS,               C0,      size,          MW,   RW,   DA,     SA,     SB
 					   //                x                   x
 	assign ArithReg_CW = { 4'b0, 3'b0, 1'b0, 2'b00, 2'b00, 1'b0,  1'b0, 1'b0, I[29], { 4'b0100, I[30] }, I[30], { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[9:5], I[20:16] };
 
 	//////////////////////////////////////////////////////////////
 	// Optional Instruction
 	// MUL Step 1 - Rd <- 0
-				  //  CGS,     NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,       SB 
+				  //  CGS,     NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,       SB
 	assign MUL_CW = { 4'b0000, 3'b010, 1'b0, 2'b00, 2'b00, 1'b0,  1'b0, 1'b0, 1'b0, 5'b00000, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], 5'b11111, 5'b11111 };
 
 	// MUL Step 2 - Rm <- Rm & 64'h00000000FFFFFFFF
-				//     CGS,     NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,       SA,       SB 
+				//     CGS,     NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,       SA,       SB
 	assign MUL2_CW = { 4'b1000, 3'b011, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b00000, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[20:16], I[20:16], 5'b0 };
 
 	// MUL Step 3 - Rn <- Rn & 64'h00000000FFFFFFFF
-				//     CGS,     NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,     SB 
+				//     CGS,     NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,     SB
 	assign MUL3_CW = { 4'b1000, 3'b100, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b00000, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[9:5], I[9:5], 5'b0 };
 
 	// MUL Step 4 - Rn & 1
-				//     CGS,     NS,                              AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,   SA,     SB 
+				//     CGS,     NS,                              AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,   SA,     SB
 	assign MUL4_CW = { 4'b1001, { 1'b1, status[0], ~status[0] }, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b00000, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b0, 5'b0, I[9:5], 5'b0 };
 
 	// MUL Step 5 - Rd <- Rd + Rm
-				//     CGS,     NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,     SB 
+				//     CGS,     NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,     SB
 	assign MUL5_CW = { 4'b0000, 3'b110, 1'b0, 2'b00, 2'b00, 1'b0,  1'b0, 1'b0, 1'b0, 5'b01000, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[4:0], I[4:0], I[20:16] };
 
 	// MUL Step 6 - Rn <- Rn >> 1
-				//     CGS,     NS,                    AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,     SB 
+				//     CGS,     NS,                    AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,     SA,     SB
 	assign MUL6_CW = { 4'b1001, { { 3{~status[0]} } }, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b10100, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[9:5], I[9:5], 5'b0 };
 
 	// MUL Step 7 - Rm <- Rm << 1
-				//     CGS,     NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,       SA,       SB 
+				//     CGS,     NS,     AS,   DS,    PS,    PCsel, Bsel, IL,   SL,   FS,       C0,     size,          MW,   RW,   DA,       SA,       SB
 	assign MUL7_CW = { 4'b1001, 3'b100, 1'b0, 2'b00, 2'b00, 1'b0,  1'b1, 1'b0, 1'b0, 5'b10000, 1'b0, { 1'b1, I[31] }, 1'b0, 1'b1, I[20:16], I[20:16], 5'b0 };
 
 endmodule
@@ -262,14 +262,16 @@ module ConstantGenerator(constant, select, I);
 	output [63:0] constant;
   	input [3:0] select;
   	input [31:0] I;
+		wire[63:0] mov_const_shift;
+		wire[63:0] mov_out;
 
 	Mux16to1Nbit constant_mux (
   		.F(constant),
   		.S(select),
   		.I0({52'b0, I[21:10]}),     	// zf I[21:10]
   		.I1({52'b0, I[21:10]}),     	// Technically wrong
-  		.I2({48'b0, I[20:5]}), 			// zf I[20:5]
-  		.I3(64'hFFFFFFFFFFFF0000),		// needed for MOV
+  		.I2(mov_const_shift), 			// zf I[20:5]
+  		.I3(mov_out),		// needed for MOV
   		.I4({{38{I[25]}}, I[25:0]}),	// se I[25:0]
   		.I5({{45{I[23]}}, I[23:5]}),	// se I[23:5]
   		.I6({{55{I[20]}}, I[20:12]}),	// se I[20:12]
@@ -283,7 +285,27 @@ module ConstantGenerator(constant, select, I);
 		.I14(64'b0),
 		.I15(64'b0)
   	);
-	defparam constant_mux.N = 64;
+		defparam	constant_mux.N = 64;
+		Mux4to1Nbit mov_const_shift_mux (
+				.F(mov_const_shift),
+				.S(I[22:21]),
+				.I0({48'b0, I[20:5]}),
+				.I1({32'b0, I[20:5], 16'b0}),
+				.I2({16'b0, I[20:5], 32'b0}),
+				.I3({I[20:5], 48'b0})
+			);
+			defparam mov_const_shift_mux.N = 64;
+
+		Mux4to1Nbit MOV_mux (
+			.F(mov_out),
+			.S(I[22:21]),
+			.I0(64'hFFFFFFFFFFFF0000),
+			.I1(64'hFFFFFFFF0000FFFF),
+			.I2(64'hFFFF0000FFFFFFFF),
+			.I3(64'h0000FFFFFFFFFFFF)
+			);
+			defparam MOV_mux.N = 64;
+
 endmodule
 
 module B_Cond_Case (encoding, status, result);
